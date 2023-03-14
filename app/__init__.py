@@ -1,9 +1,12 @@
+import os
+import logging
+from logging.handlers import SMTPHandler, RotatingFileHandler
 from flask import Flask
+from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
 from flask_moment import Moment
 from flask_sqlalchemy import SQLAlchemy
-from flask_user import UserManager, SQLAlchemyAdapter
 from flask_wtf.csrf import CSRFProtect
 from flask_bootstrap import Bootstrap
 from flask_admin import Admin
@@ -31,42 +34,45 @@ migrate = Migrate()
 bootstrap = Bootstrap()
 moment = Moment()
 
+login = LoginManager()
+login.login_view = 'auth.login'
+login.login_message = 'Пожалуйста, авторизируйтесь на сайте.'
+
 
 def create_app(extra_config_settings={}):
     # Create a Flask applicaction.
 
     # Instantiate Flask
     app = Flask(__name__)
-
     # Load App Config settings
-    # Load common settings from 'app/settings.py' file
-    app.config.from_object('app.settings')
     # Load local settings from 'app/local_settings.py'
     app.config.from_object('app.local_settings')
     # Load extra config settings from 'extra_config_settings' param
     app.config.update(extra_config_settings)
-
-    # Setup Flask-Extensions -- do this _after_ app config has been loaded
-
     # Setup Flask-SQLAlchemy
     db.init_app(app)
-
-    # Setup Flask-Migrate
-    migrate.init_app(app, db)
-
     # Setup Flask-Mail
     mail.init_app(app)
-
     # Setup WTForms CSRFProtect
     csrf_protect.init_app(app)
+    # Setup Bootstrap
+    bootstrap.init_app(app)
+    # Setup Moment
+    moment.init_app(app)
 
     # Register blueprints
-    from app.views.public_views import public_blueprint
-    app.register_blueprint(public_blueprint)
-    from app.views.members_views import members_blueprint
-    app.register_blueprint(members_blueprint)
-    # from app.views.admin_views import admin_blueprint
-    # app.register_blueprint(admin_blueprint)
+    # Errors
+    from app.errors import bp as errors_bp
+    app.register_blueprint(errors_bp)
+    # Authentication
+    from app.auth import bp as auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/auth')
+    # Main
+    from app.main import bp as main_bp
+    app.register_blueprint(main_bp)
+    # Admin
+    from app.admin import bp as admin_bp
+    app.register_blueprint(admin_bp, url_prefix="/admin")
 
     # Define bootstrap_is_hidden_field for flask-bootstrap's bootstrap_wtf.html
     from wtforms.fields import HiddenField
@@ -75,23 +81,6 @@ def create_app(extra_config_settings={}):
         return isinstance(field, HiddenField)
 
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
-
-    # Setup an error-logger to send emails to app.config.ADMINS
-    init_email_error_handler(app)
-
-    # Setup Flask-User to handle user account related forms
-    from .models.models import User, MyRegisterForm
-    from .views.members_views import user_profile_page
-    db_adapter = SQLAlchemyAdapter(db, User)  # Setup the SQLAlchemy DB Adapter
-    UserManager(
-        db_adapter, app,  # Init Flask-User and bind to app
-        register_form=MyRegisterForm,  # Custom register form UserProfile fields
-        user_profile_view_function=user_profile_page,
-    )
-
-    babel.init_app(app)  # Initialize Flask-Babel
-
-    Bootstrap(app)  # Initialize flask_bootstrap
 
     # Admin part
     class AdminUserView(ModelView):
@@ -106,51 +95,55 @@ def create_app(extra_config_settings={}):
     class AdmRolesView(ModelView):
         column_display_pk = True
 
+    # Admin model views
     from .models.admin_models import AdmUsers, AdmUsersRoles, AdmRoles
-    admin = Admin(app, template_mode='bootstrap3')
-    admin.add_view(AdminUserView(AdmUsers, db.session, name='Users'))
+    admin = Admin(app, name='Нескучка', template_mode='bootstrap3', endpoint='admin')
+    admin.add_view(AdminUserView(AdmUsers, db.session, name='Пользователь'))
     admin.add_view(AdmRolesView(AdmUsersRoles, db.session,
                                 name='Roles-User'))
-    admin.add_view(AdmUsersRolesView(AdmRoles, db.session, name='Role'))
+    admin.add_view(AdmUsersRolesView(AdmRoles, db.session, name='Роль'))
     path = op.join(op.dirname(__file__), 'static')
     admin.add_view(FileAdmin(path, '/static/', name='Files'))
+
+    # Main model views
+    from .models.models import Comment, Exercise, WOD, Result
+    admin.add_view(ModelView(Comment, db.session, name='Комментарии'))
+    admin.add_view(ModelView(Exercise, db.session, name='Упражнения'))
+    admin.add_view(ModelView(WOD, db.session, name='Упражнения'))
+    admin.add_view(ModelView(Result, db.session, name='Результаты'))
+
     admin.add_link(MenuLink(name='Profile', endpoint='user.profile'))
     admin.add_link(MenuLink(name='Logout', endpoint='user.logout'))
 
+    # Test and Debug
+    if not app.debug and not app.testing:
+        if app.config['MAIL_SERVER']:
+            auth = None
+            if app.config['MAIL_USERNAME'] or app.config['MAIL_PASSWORD']:
+                auth = (app.config['MAIL_USERNAME'],
+                        app.config['MAIL_PASSWORD'])
+            secure = None
+            if app.config['MAIL_USE_TLS']:
+                secure = ()
+            mail_handler = SMTPHandler(
+                mailhost=(app.config['MAIL_SERVER'], app.config['MAIL_PORT']),
+                fromaddr='no-reply@' + app.config['MAIL_SERVER'],
+                toaddrs=app.config['ADMINS'], subject='NS Failure',
+                credentials=auth, secure=secure)
+            mail_handler.setLevel(logging.ERROR)
+            app.logger.addHandler(mail_handler)
+
+        if not os.path.exists('logs'):
+            os.mkdir('logs')
+        file_handler = RotatingFileHandler('logs/ns.log',
+                                           maxBytes=10240, backupCount=10)
+        file_handler.setFormatter(logging.Formatter(
+            '%(asctime)s %(levelname)s: %(message)s '
+            '[in %(pathname)s:%(lineno)d]'))
+        file_handler.setLevel(logging.INFO)
+        app.logger.addHandler(file_handler)
+
+        app.logger.setLevel(logging.INFO)
+        app.logger.info('NS startup')
+
     return app
-
-
-def init_email_error_handler(app):
-    # Initialize a logger to send emails on error-level messages.
-    # Unhandled exceptions will now send an email message to app.config.ADMINS.
-    if app.debug:
-        return  # Do not send error emails while developing
-
-    # Retrieve email settings from app.config
-    host = app.config['MAIL_SERVER']
-    port = app.config['MAIL_PORT']
-    from_addr = app.config['MAIL_DEFAULT_SENDER']
-    username = app.config['MAIL_USERNAME']
-    password = app.config['MAIL_PASSWORD']
-    secure = () if app.config.get('MAIL_USE_TLS') else None
-
-    # Retrieve app settings from app.config
-    to_addr_list = app.config['ADMINS']
-    subject = app.config.get('APP_SYSTEM_ERROR_SUBJECT_LINE', 'System Error')
-
-    # Setup an SMTP mail handler for error-level messages
-    import logging
-    from logging.handlers import SMTPHandler
-
-    mail_handler = SMTPHandler(
-        mailhost=(host, port),  # Mail host and port
-        fromaddr=from_addr,  # From address
-        toaddrs=to_addr_list,  # To address
-        subject=subject,  # Subject line
-        credentials=(username, password),  # Credentials
-        secure=secure,
-    )
-
-    # Log errors using: app.logger.error('Some error message')
-    mail_handler.setLevel(logging.ERROR)
-    app.logger.addHandler(mail_handler)

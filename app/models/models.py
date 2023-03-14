@@ -1,7 +1,11 @@
 from datetime import datetime
 
+from flask import current_app
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import UserMixin
 from flask_wtf import FlaskForm
-from app import db
+from app import db, login
+import jwt
 
 
 # Database relationships
@@ -65,6 +69,27 @@ class User(db.Model, UserMixin):
     exercises = db.relationship('Exercise', backref='author', lazy='dynamic')
     roles = db.relationship('Role', secondary='users_roles', backref=db.backref('users', lazy='dynamic'))
 
+    def __repr__(self):
+        return '<User {}>'.format(self.username)
+
+    def set_password(self, password):
+        self.password_hash = generate_password_hash(password)
+
+    def check_password(self, password):
+        return check_password_hash(self.password_hash, password)
+
+    @staticmethod
+    def verify_reset_password_token(token):
+        try:
+            id = jwt.decode(token, current_app.config['SECRET_KEY'],
+                            algorithms=['HS256'])['reset_password']
+        except:
+            return
+        return User.query.get(id)
+
+@login.user_loader
+def load_user(id):
+    return User.query.get(int(id))
 
 # Define the Role data model.
 class Role(db.Model):

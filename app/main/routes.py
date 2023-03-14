@@ -3,8 +3,8 @@ from flask import render_template, flash, redirect, url_for, request, g, \
     jsonify, current_app
 from flask_login import current_user, login_required
 from app import db
-from app.main.forms import EditProfileForm, EmptyForm, CommentForm
-from app.models import User, Comment
+from app.forms.forms import EditProfileForm, EmptyForm, CommentForm
+from app.models.models import User, Comment
 from app.main import bp
 
 
@@ -14,7 +14,7 @@ def before_request():
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
 
-
+# WOD page
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required

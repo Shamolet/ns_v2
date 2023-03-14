@@ -1,4 +1,9 @@
+from flask_admin import AdminIndexView, BaseView, expose
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
+
+from app.models.models import User
+
 db = SQLAlchemy()
 
 # Define the User data model.
@@ -48,3 +53,9 @@ class AdmRoles(db.Model):
     name = db.Column(db.String(50), nullable=False, server_default=u'', unique=True)  # for @roles_accepted()
     # for display purposes
     label = db.Column(db.Unicode(255), server_default=u'')
+
+
+class AnyPageView(BaseView):
+    @expose('/')
+    def any_page(self):
+        return self.render('admin/index.html')
