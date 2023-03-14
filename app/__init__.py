@@ -80,7 +80,7 @@ def create_app(extra_config_settings={}):
     init_email_error_handler(app)
 
     # Setup Flask-User to handle user account related forms
-    from .models.user_models import User, MyRegisterForm
+    from .models.models import User, MyRegisterForm
     from .views.members_views import user_profile_page
     db_adapter = SQLAlchemyAdapter(db, User)  # Setup the SQLAlchemy DB Adapter
     UserManager(

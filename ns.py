@@ -1,7 +1,7 @@
 from flask_script import Manager
 
 from app import create_app, db
-from app.models import User, Comment, Exercise, WOD, Result
+from app.models.models import User, Comment, Exercise, WOD, Result
 
 manager = Manager(create_app)
 manager.add_command('db', MigrateCommand)
