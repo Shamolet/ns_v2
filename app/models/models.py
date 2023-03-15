@@ -24,7 +24,7 @@ users_comments = db.Table(
 users_wods = db.Table(
     'users_wods',
     db.Column('wod_id', db.Integer(), db.ForeignKey('wods.id')),
-    db.Column('user_id', db.Integer(), db.ForeignKey('users.d'))
+    db.Column('user_id', db.Integer(), db.ForeignKey('users.id'))
 )
 
 users_results = db.Table(

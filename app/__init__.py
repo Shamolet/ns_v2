@@ -10,12 +10,9 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 from flask_bootstrap import Bootstrap
 from flask_admin import Admin
-from flask_admin.contrib.fileadmin import FileAdmin
-from flask_admin.base import MenuLink
 from flask_admin.contrib.sqla import ModelView
-import os.path as op
-
 from sqlalchemy import MetaData
+from config import Config
 
 # Instantiate Flask extensions
 convention = {
@@ -27,30 +24,28 @@ convention = {
 }
 
 metadata = MetaData(naming_convention=convention)
+
 db = SQLAlchemy()
 csrf_protect = CSRFProtect()
 mail = Mail()
 migrate = Migrate()
 bootstrap = Bootstrap()
 moment = Moment()
-
 login = LoginManager()
 login.login_view = 'auth.login'
 login.login_message = 'Пожалуйста, авторизируйтесь на сайте.'
 
 
-def create_app(extra_config_settings={}):
+def create_app(config_class=Config):
     # Create a Flask applicaction.
-
     # Instantiate Flask
     app = Flask(__name__)
     # Load App Config settings
-    # Load local settings from 'app/local_settings.py'
-    app.config.from_object('app.local_settings')
-    # Load extra config settings from 'extra_config_settings' param
-    app.config.update(extra_config_settings)
+    app.config.from_object(config_class)
     # Setup Flask-SQLAlchemy
     db.init_app(app)
+    # Setup Flask-Migrate
+    migrate.init_app(app, db)
     # Setup Flask-Mail
     mail.init_app(app)
     # Setup WTForms CSRFProtect
@@ -73,7 +68,6 @@ def create_app(extra_config_settings={}):
     # Admin
     from app.admin import bp as admin_bp
     app.register_blueprint(admin_bp, url_prefix="/admin")
-
     # Define bootstrap_is_hidden_field for flask-bootstrap's bootstrap_wtf.html
     from wtforms.fields import HiddenField
 
@@ -96,14 +90,13 @@ def create_app(extra_config_settings={}):
         column_display_pk = True
 
     # Admin model views
-    from .models.admin_models import AdmUsers, AdmUsersRoles, AdmRoles
     admin = Admin(app, name='Нескучка', template_mode='bootstrap3', endpoint='admin')
+
+    from .models.admin_models import AdmUsers, AdmUsersRoles, AdmRoles
     admin.add_view(AdminUserView(AdmUsers, db.session, name='Пользователь'))
     admin.add_view(AdmRolesView(AdmUsersRoles, db.session,
                                 name='Roles-User'))
     admin.add_view(AdmUsersRolesView(AdmRoles, db.session, name='Роль'))
-    path = op.join(op.dirname(__file__), 'static')
-    admin.add_view(FileAdmin(path, '/static/', name='Files'))
 
     # Main model views
     from .models.models import Comment, Exercise, WOD, Result
@@ -111,9 +104,6 @@ def create_app(extra_config_settings={}):
     admin.add_view(ModelView(Exercise, db.session, name='Упражнения'))
     admin.add_view(ModelView(WOD, db.session, name='Упражнения'))
     admin.add_view(ModelView(Result, db.session, name='Результаты'))
-
-    admin.add_link(MenuLink(name='Profile', endpoint='user.profile'))
-    admin.add_link(MenuLink(name='Logout', endpoint='user.logout'))
 
     # Test and Debug
     if not app.debug and not app.testing:
