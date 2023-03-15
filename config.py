@@ -23,3 +23,12 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['your-email@example.com']
+    #Index
+    WODS_PER_PAGE = 1
+
+class ProductionConfig(Config):
+    DEBUG = False
+
+class DevelopmentConfig(Config):
+    DEVELOPMENT = True
+    DEBUG = True
