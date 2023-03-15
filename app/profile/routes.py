@@ -1,6 +1,5 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, g, \
-    jsonify, current_app
+from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_required
 
 from app.forms.forms import EditProfileForm
@@ -8,17 +7,19 @@ from app.models.models import User
 from app import db
 from app.profile import bp
 
+
 @bp.before_app_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
 
+
 @bp.route('/profile/<username>')
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template('profile.html', user=user)
+    return render_template('profile_page.html', user=user)
 
 
 @bp.route('/edit_profile', methods=['GET', 'POST'])

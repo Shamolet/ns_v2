@@ -13,6 +13,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from sqlalchemy import MetaData
 from config import Config
+from flask_user import UserManager, SQLAlchemyAdapter
 
 # Instantiate Flask extensions
 convention = {
@@ -48,13 +49,14 @@ def create_app(config_class=Config):
     migrate.init_app(app, db)
     # Setup Flask-Mail
     mail.init_app(app)
+    # Setup Flask-Login
+    login.init_app(app)
     # Setup WTForms CSRFProtect
     csrf_protect.init_app(app)
     # Setup Bootstrap
     bootstrap.init_app(app)
     # Setup Moment
     moment.init_app(app)
-
     # Register blueprints
     # Errors
     from app.errors import bp as errors_bp
@@ -75,6 +77,16 @@ def create_app(config_class=Config):
         return isinstance(field, HiddenField)
 
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
+
+    # Setup Flask-User to handle user account related forms
+    from .models.models import User
+    from .forms.auth_forms import RegistrationForm
+    db_adapter = SQLAlchemyAdapter(db, User)  # Setup the SQLAlchemy DB Adapter
+    UserManager(
+        db_adapter, app,  # Init Flask-User and bind to app
+        register_form=RegistrationForm,  # Custom register form UserProfile fields
+        user_profile_view_function=profile_page,
+    )
 
     # Admin part
     class AdminUserView(ModelView):

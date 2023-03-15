@@ -1,6 +1,5 @@
 from datetime import datetime
-from flask import render_template, flash, redirect, url_for, request, g, \
-    jsonify, current_app
+from flask import render_template, current_app
 from flask_login import current_user, login_required
 from app import db
 from app.models.models import WOD
@@ -13,12 +12,12 @@ def before_request():
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
 
+
 # Index page 1 current WOD
 @bp.route('/', methods=['GET', 'POST'])
 @bp.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    '<h1>Hi, world</h1>'
     wods = WOD.query.order_by(WOD.timestamp.desc()).paginate(
         per_page=current_app.config['WODS_PER_PAGE'], error_out=False)
 
