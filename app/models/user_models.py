@@ -156,7 +156,7 @@ class Result(db.Model):
     # think about post results: load, time, reps
     result = db.Column(db.String(200), unique=False, nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    # отношения с юзерами и тренировками
+    # Relationship User, Exercise
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     exercises = db.relationship("exercises.id", backref='author', lazy=True)
 

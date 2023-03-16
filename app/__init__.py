@@ -13,7 +13,7 @@ from flask_admin import Admin
 from flask_admin.contrib.sqla import ModelView
 from sqlalchemy import MetaData
 from config import Config
-from flask_user import UserManager, SQLAlchemyAdapter
+
 
 # Instantiate Flask extensions
 convention = {
@@ -78,16 +78,6 @@ def create_app(config_class=Config):
 
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
-    # Setup Flask-User to handle user account related forms
-    from .models.models import User
-    from .forms.auth_forms import RegistrationForm
-    db_adapter = SQLAlchemyAdapter(db, User)  # Setup the SQLAlchemy DB Adapter
-    UserManager(
-        db_adapter, app,  # Init Flask-User and bind to app
-        register_form=RegistrationForm,  # Custom register form UserProfile fields
-        user_profile_view_function=profile_page,
-    )
-
     # Admin part
     class AdminUserView(ModelView):
         can_create = False
@@ -104,14 +94,14 @@ def create_app(config_class=Config):
     # Admin model views
     admin = Admin(app, name='Нескучка', template_mode='bootstrap3', endpoint='admin')
 
-    from .models.admin_models import AdmUsers, AdmUsersRoles, AdmRoles
-    admin.add_view(AdminUserView(AdmUsers, db.session, name='Пользователь'))
-    admin.add_view(AdmRolesView(AdmUsersRoles, db.session,
+    from .models.user_models import User, UsersRoles, Role
+    admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
+    admin.add_view(AdmUsersRolesView(UsersRoles, db.session,
                                 name='Roles-User'))
-    admin.add_view(AdmUsersRolesView(AdmRoles, db.session, name='Роль'))
+    admin.add_view(AdmRolesView(Role, db.session, name='Роль'))
 
     # Main model views
-    from .models.models import Comment, Exercise, WOD, Result
+    from .models.user_models import Comment, Exercise, WOD, Result
     admin.add_view(ModelView(Comment, db.session, name='Комментарии'))
     admin.add_view(ModelView(Exercise, db.session, name='Упражнения'))
     admin.add_view(ModelView(WOD, db.session, name='Упражнения'))

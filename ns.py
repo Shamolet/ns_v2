@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models.models import User, Comment, Exercise, WOD, Result
+from app.models.user_models import User, Comment, Exercise, WOD, Result
 
 app = create_app()
 app.run(debug=True)

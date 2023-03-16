@@ -1,7 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, BooleanField, SubmitField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
-from app.models.models import User
+from app.models.user_models import User
 
 
 class LoginForm(FlaskForm):
@@ -28,7 +28,7 @@ class RegistrationForm(FlaskForm):
     def validate_email(self, email):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
-            raise ValidationError('Пожалуйста, используй другую почту.')
+            raise ValidationError('Пожалуйста, используйте другую почту.')
 
 
 class ResetPasswordRequestForm(FlaskForm):

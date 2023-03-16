@@ -3,7 +3,7 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_required
 
 from app.forms.forms import EditProfileForm
-from app.models.models import User
+from app.models.user_models import User
 from app import db
 from app.profile import bp
 
