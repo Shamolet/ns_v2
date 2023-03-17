@@ -79,33 +79,33 @@ def create_app(config_class=Config):
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
     # Admin part
-    class AdminUserView(ModelView):
-        can_create = False
-        column_display_pk = True
-        column_exclude_list = ('password')
-        form_overrides = dict(password=HiddenField)
-
-    class AdmUsersRolesView(ModelView):
-        column_display_pk = True
-
-    class AdmRolesView(ModelView):
-        column_display_pk = True
+    # class AdminUserView(ModelView):
+    #     can_create = False
+    #     column_display_pk = True
+    #     column_exclude_list = ('password')
+    #     form_overrides = dict(password=HiddenField)
+    #
+    # class AdmUsersRolesView(ModelView):
+    #     column_display_pk = True
+    #
+    # class AdmRolesView(ModelView):
+    #     column_display_pk = True
 
     # Admin model views
     admin = Admin(app, name='Нескучка', template_mode='bootstrap3', endpoint='admin')
 
-    from .models.user_models import User, UsersRoles, Role
-    admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
-    admin.add_view(AdmUsersRolesView(UsersRoles, db.session,
-                                name='Roles-User'))
-    admin.add_view(AdmRolesView(Role, db.session, name='Роль'))
-
-    # Main model views
-    from .models.user_models import Comment, Exercise, WOD, Result
-    admin.add_view(ModelView(Comment, db.session, name='Комментарии'))
-    admin.add_view(ModelView(Exercise, db.session, name='Упражнения'))
-    admin.add_view(ModelView(WOD, db.session, name='Упражнения'))
-    admin.add_view(ModelView(Result, db.session, name='Результаты'))
+    # from .models.models import User, UsersRoles, Role
+    # admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
+    # admin.add_view(AdmUsersRolesView(UsersRoles, db.session,
+    #                             name='Roles-User'))
+    # admin.add_view(AdmRolesView(Role, db.session, name='Роль'))
+    #
+    # # Main model views
+    # from .models.models import Comment, Exercise, WOD, Result
+    # admin.add_view(ModelView(Comment, db.session, name='Комментарии'))
+    # admin.add_view(ModelView(Exercise, db.session, name='Упражнения'))
+    # admin.add_view(ModelView(WOD, db.session, name='Упражнения'))
+    # admin.add_view(ModelView(Result, db.session, name='Результаты'))
 
     # Test and Debug
     if not app.debug and not app.testing:

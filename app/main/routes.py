@@ -2,7 +2,7 @@ from datetime import datetime
 from flask import render_template, current_app
 from flask_login import current_user, login_required
 from app import db
-from app.models.user_models import WOD
+from app.models.models import WOD
 from app.main import bp
 
 

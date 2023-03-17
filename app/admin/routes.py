@@ -4,7 +4,7 @@ from flask import render_template, redirect, url_for, flash,request
 from app.profile import constants as USER
 from app.forms.auth_forms import LoginForm
 from flask_login import login_user, logout_user
-from app.models.user_models import User
+from app.models.models import User
 
 
 @bp.get('/admin')

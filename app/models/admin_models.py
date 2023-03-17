@@ -1,6 +1,5 @@
 from flask_admin import AdminIndexView, BaseView, expose
-from flask_sqlalchemy import SQLAlchemy
-from app.models.user_models import User, Comment
+from app.models.models import User, Comment
 from app import db
 
 

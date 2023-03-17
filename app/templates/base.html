@@ -19,14 +19,14 @@
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('main.index') }}">Домашняя</a></li>
-                    <li><a href="{{ url_for('main.index') }}">Тренировки</a></li>
-                    <li><a href="{{ url_for('main.index') }}">Упражнения</a></li>
+                    <li><a href="{{ url_for('main.wods') }}">Тренировки</a></li>
+                    <li><a href="{{ url_for('main.exercises') }}">Упражнения</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}
                     <li><a href="{{ url_for('auth.login') }}">Войти</a></li>
                     {% else %}
-                    <li><a href="{{ url_for('main.user', username=current_user.username) }}">Профиль</a></li>
+                    <li><a href="{{ url_for('profile.user', username=current_user.username) }}">Профиль</a></li>
                     <li><a href="{{ url_for('auth.logout') }}">Выйти</a></li>
                     {% endif %}
                 </ul>

@@ -5,7 +5,7 @@ from app import db
 from app.auth import bp
 from app.forms.auth_forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
-from app.models.user_models import User
+from app.models.models import User
 from app.auth.email import send_password_reset_email
 
 

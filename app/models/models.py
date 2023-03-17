@@ -4,7 +4,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db, login
 import jwt
-from app.profile import constants as USER
+from app.profile import constants
 
 
 # Database relationships
@@ -50,10 +50,10 @@ class User(db.Model, UserMixin):
                       server_default=u'', unique=True)
     confirmed_at = db.Column(db.DateTime())
     password_hash = db.Column(db.String(128))
-    sex = db.Column(db.SmallInteger, default=USER.OTHER)  # (0) man (1) woman
+    sex = db.Column(db.SmallInteger, default=constants.OTHER)  # (0) man (1) woman
     bith = db.Column(db.DateTime, nullable=False, default=None)
     about_me = db.Column(db.String(140))
-    status = db.Column(db.SmallInteger, default=USER.NEW)
+    status = db.Column(db.SmallInteger, default=constants.NEW)
     # User information
     registry = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
@@ -63,8 +63,7 @@ class User(db.Model, UserMixin):
     wods = db.relationship('WOD', backref='author', lazy='dynamic')
     exercises = db.relationship('Exercise', backref='author', lazy='dynamic')
     roles = db.relationship('Role', secondary='users_roles',
-                            backref=db.backref('users', lazy='dynamic'),
-                            default=USER.USER)
+                            backref=db.backref('users', lazy='dynamic'))
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -94,8 +93,7 @@ class Role(db.Model):
     __tablename__ = 'roles'
 
     id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.String(50), nullable=False,
-                     server_default=u'', unique=True)  # for @roles_accepted()
+    role = db.Column(db.SmallInteger, default=constants.ATHLETE)
     # for display purposes
     label = db.Column(db.Unicode(255), server_default=u'')
 
