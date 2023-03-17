@@ -4,66 +4,33 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db, login
 import jwt
-from app.profile import constants
-
-
-# Database relationships
-roles_users = db.Table(
-    'roles_users',
-    db.Column('user_id', db.Integer(), db.ForeignKey('users.id')),
-    db.Column('role_id', db.Integer(), db.ForeignKey('roles.id'))
-)
-
-users_comments = db.Table(
-    'users_comments',
-    db.Column('comment_id', db.Integer(), db.ForeignKey('comments.id')),
-    db.Column('user_id', db.Integer(), db.ForeignKey('users.id'))
-)
-
-users_wods = db.Table(
-    'users_wods',
-    db.Column('wod_id', db.Integer(), db.ForeignKey('wods.id')),
-    db.Column('user_id', db.Integer(), db.ForeignKey('users.id'))
-)
-
-users_results = db.Table(
-    'users_results',
-    db.Column('result_id', db.Integer(), db.ForeignKey('results.id')),
-    db.Column('user_id', db.Integer(), db.ForeignKey('users.id'))
-)
-
-wods_exercises = db.Table(
-    'wods_exercises',
-    db.Column('exercise_id', db.Integer(), db.ForeignKey('exercises.id')),
-    db.Column('wod_id', db.Integer(), db.ForeignKey('wods.id'))
-)
-
+from time import time
+from app.user import constants as USER
 
 # Define the User data model.
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
     id = db.Column(db.Integer, primary_key=True)
-    # User authentication information (required for Flask-User)
+    # User authentication information
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.Unicode(255), nullable=False,
                       server_default=u'', unique=True)
-    confirmed_at = db.Column(db.DateTime())
     password_hash = db.Column(db.String(128))
-    sex = db.Column(db.SmallInteger, default=constants.OTHER)  # (0) man (1) woman
+    sex = db.Column(db.SmallInteger, default=USER.OTHER)  # (0) man (1) woman
     bith = db.Column(db.DateTime, nullable=False, default=None)
-    about_me = db.Column(db.String(140))
-    status = db.Column(db.SmallInteger, default=constants.NEW)
+    about_me = db.Column(db.String(280))
+    status = db.Column(db.SmallInteger, default=USER.ACTIVE)
     # User information
     registry = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
+    role = db.Column(db.SmallInteger, default=USER.USER)
     # Relationships
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
     results = db.relationship('Result', backref='author', lazy='dynamic')
     wods = db.relationship('WOD', backref='author', lazy='dynamic')
     exercises = db.relationship('Exercise', backref='author', lazy='dynamic')
-    roles = db.relationship('Role', secondary='users_roles',
-                            backref=db.backref('users', lazy='dynamic'))
+
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -73,6 +40,11 @@ class User(db.Model, UserMixin):
 
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
+
+    def get_reset_password_token(self, expires_in=600):
+        return jwt.encode(
+            {'reset_password': self.id, 'exp': time() + expires_in},
+            current_app.config['SECRET_KEY'], algorithm='HS256')
 
     @staticmethod
     def verify_reset_password_token(token):
@@ -88,23 +60,6 @@ class User(db.Model, UserMixin):
 def load_user(id):
     return User.query.get(int(id))
 
-# Define the Role data model.
-class Role(db.Model):
-    __tablename__ = 'roles'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    role = db.Column(db.SmallInteger, default=constants.ATHLETE)
-    # for display purposes
-    label = db.Column(db.Unicode(255), server_default=u'')
-
-
-# Define the UserRoles association model
-class UsersRoles(db.Model):
-    __tablename__ = 'users_roles'
-
-    id = db.Column(db.Integer(), primary_key=True)
-    user_id = db.Column(db.Integer(), db.ForeignKey('users.id', ondelete='CASCADE'))
-    role_id = db.Column(db.Integer(), db.ForeignKey('roles.id', ondelete='CASCADE'))
 
 # Define the Comment data model.
 class Comment(db.Model):
@@ -157,4 +112,3 @@ class Result(db.Model):
     # Relationship User, Exercise
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
     exercises = db.relationship("exercises.id", backref='author', lazy=True)
-

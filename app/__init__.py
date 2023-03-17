@@ -1,30 +1,30 @@
-import os
-import logging
-from logging.handlers import SMTPHandler, RotatingFileHandler
-from flask import Flask
-from flask_login import LoginManager
-from flask_mail import Mail
-from flask_migrate import Migrate
-from flask_moment import Moment
-from flask_sqlalchemy import SQLAlchemy
-from flask_wtf.csrf import CSRFProtect
-from flask_bootstrap import Bootstrap
-from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
-from sqlalchemy import MetaData
-from config import Config
+import os #
+import logging #
+from logging.handlers import SMTPHandler, RotatingFileHandler #
+from flask import Flask #
+from flask_login import LoginManager #
+from flask_mail import Mail #
+from flask_migrate import Migrate #
+from flask_moment import Moment #
+from flask_sqlalchemy import SQLAlchemy #
+from flask_wtf.csrf import CSRFProtect #
+from flask_bootstrap import Bootstrap #
+from flask_admin import Admin #
+from flask_admin.contrib.sqla import ModelView #
+# from sqlalchemy import MetaData #
+from config import Config #
 
 
 # Instantiate Flask extensions
-convention = {
-    "ix": 'ix_%(column_0_label)s',
-    "uq": "uq_%(table_name)s_%(column_0_name)s",
-    "ck": "ck_%(table_name)s_%(column_0_name)s",
-    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-    "pk": "pk_%(table_name)s"
-}
-
-metadata = MetaData(naming_convention=convention)
+# convention = {
+#     "ix": 'ix_%(column_0_label)s',
+#     "uq": "uq_%(table_name)s_%(column_0_name)s",
+#     "ck": "ck_%(table_name)s_%(column_0_name)s",
+#     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+#     "pk": "pk_%(table_name)s"
+# }
+#
+# metadata = MetaData(naming_convention=convention)
 
 db = SQLAlchemy()
 csrf_protect = CSRFProtect()
@@ -57,16 +57,17 @@ def create_app(config_class=Config):
     bootstrap.init_app(app)
     # Setup Moment
     moment.init_app(app)
+
     # Register blueprints
     # Errors
     from app.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
     # Authentication
-    from app.auth import bp as auth_bp
+    from app.user.auth import bp as auth_bp
     app.register_blueprint(auth_bp, url_prefix='/auth')
-    # Main
-    from app.main import bp as main_bp
-    app.register_blueprint(main_bp)
+    # User
+    from app.user import bp as user_bp
+    app.register_blueprint(user_bp)
     # Admin
     from app.admin import bp as admin_bp
     app.register_blueprint(admin_bp, url_prefix="/admin")
@@ -79,33 +80,24 @@ def create_app(config_class=Config):
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
     # Admin part
-    # class AdminUserView(ModelView):
-    #     can_create = False
-    #     column_display_pk = True
-    #     column_exclude_list = ('password')
-    #     form_overrides = dict(password=HiddenField)
-    #
-    # class AdmUsersRolesView(ModelView):
-    #     column_display_pk = True
-    #
-    # class AdmRolesView(ModelView):
-    #     column_display_pk = True
+    class AdminUserView(ModelView):
+        can_create = False
+        column_display_pk = True
+        column_exclude_list = ('password')
+        form_overrides = dict(password=HiddenField)
 
     # Admin model views
     admin = Admin(app, name='Нескучка', template_mode='bootstrap3', endpoint='admin')
 
-    # from .models.models import User, UsersRoles, Role
-    # admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
-    # admin.add_view(AdmUsersRolesView(UsersRoles, db.session,
-    #                             name='Roles-User'))
-    # admin.add_view(AdmRolesView(Role, db.session, name='Роль'))
-    #
-    # # Main model views
-    # from .models.models import Comment, Exercise, WOD, Result
-    # admin.add_view(ModelView(Comment, db.session, name='Комментарии'))
-    # admin.add_view(ModelView(Exercise, db.session, name='Упражнения'))
-    # admin.add_view(ModelView(WOD, db.session, name='Упражнения'))
-    # admin.add_view(ModelView(Result, db.session, name='Результаты'))
+    from app.models import User
+    admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
+
+    # Main model views
+    from app.models import Comment, Exercise, WOD, Result
+    admin.add_view(ModelView(Comment, db.session, name='Комментарии'))
+    admin.add_view(ModelView(Exercise, db.session, name='Упражнения'))
+    admin.add_view(ModelView(WOD, db.session, name='Упражнения'))
+    admin.add_view(ModelView(Result, db.session, name='Результаты'))
 
     # Test and Debug
     if not app.debug and not app.testing:

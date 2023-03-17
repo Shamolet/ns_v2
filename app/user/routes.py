@@ -1,11 +1,10 @@
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_required
-
 from app.forms.forms import EditProfileForm
-from app.models.models import User
+from app.models import User
 from app import db
-from app.profile import bp
+from app.user import bp
 
 
 @bp.before_app_request
@@ -15,7 +14,7 @@ def before_request():
         db.session.commit()
 
 
-@bp.route('/profile/<username>')
+@bp.route('/user/<username>')
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()

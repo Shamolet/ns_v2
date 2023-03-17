@@ -1,5 +1,5 @@
 from app import create_app, db
-from app.models.models import User, Comment, Exercise, WOD, Result
+from app.models import User, Comment, Exercise, WOD, Result
 
 app = create_app()
 app.run(debug=True)
@@ -8,3 +8,5 @@ app.run(debug=True)
 def make_shell_context():
     return {'db': db, 'users': User, 'comments': Comment, 'exercises': Exercise,
             'wods': WOD, 'results': Result}
+
+

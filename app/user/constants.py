@@ -1,20 +1,18 @@
 # User role
 ADMIN = 0
 STAFF = 1
-ATHLETE = 2
-ROLE = {
+USER = 2
+USER = {
     ADMIN: 'admin',
     STAFF: 'staff',
-    ATHLETE: 'пользователь',
+    USER: 'пользователь',
 }
 
 # user status
 INACTIVE = 0
-NEW = 1
-ACTIVE = 2
+ACTIVE = 1
 STATUS = {
     INACTIVE: 'не в сети',
-    NEW: 'новичок',
     ACTIVE: 'в сети',
 }
 

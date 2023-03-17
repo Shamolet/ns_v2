@@ -1,10 +1,10 @@
 from werkzeug.urls import url_parse
 from app.admin import bp
 from flask import render_template, redirect, url_for, flash,request
-from app.profile import constants as USER
+from app.user import constants as USER
 from app.forms.auth_forms import LoginForm
 from flask_login import login_user, logout_user
-from app.models.models import User
+from app.models import User
 
 
 @bp.get('/admin')
