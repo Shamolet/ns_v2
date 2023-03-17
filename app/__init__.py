@@ -11,20 +11,20 @@ from flask_wtf.csrf import CSRFProtect #
 from flask_bootstrap import Bootstrap #
 from flask_admin import Admin #
 from flask_admin.contrib.sqla import ModelView #
-# from sqlalchemy import MetaData #
+from sqlalchemy import MetaData #
 from config import Config #
 
 
 # Instantiate Flask extensions
-# convention = {
-#     "ix": 'ix_%(column_0_label)s',
-#     "uq": "uq_%(table_name)s_%(column_0_name)s",
-#     "ck": "ck_%(table_name)s_%(column_0_name)s",
-#     "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-#     "pk": "pk_%(table_name)s"
-# }
-#
-# metadata = MetaData(naming_convention=convention)
+convention = {
+    "ix": 'ix_%(column_0_label)s',
+    "uq": "uq_%(table_name)s_%(column_0_name)s",
+    "ck": "ck_%(table_name)s_%(column_0_name)s",
+    "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
+    "pk": "pk_%(table_name)s"
+}
+
+metadata = MetaData(naming_convention=convention)
 
 db = SQLAlchemy()
 csrf_protect = CSRFProtect()
@@ -89,15 +89,13 @@ def create_app(config_class=Config):
     # Admin model views
     admin = Admin(app, name='Нескучка', template_mode='bootstrap3', endpoint='admin')
 
-    from app.models import User
-    admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
-
-    # Main model views
-    from app.models import Comment, Exercise, WOD, Result
-    admin.add_view(ModelView(Comment, db.session, name='Комментарии'))
-    admin.add_view(ModelView(Exercise, db.session, name='Упражнения'))
-    admin.add_view(ModelView(WOD, db.session, name='Упражнения'))
-    admin.add_view(ModelView(Result, db.session, name='Результаты'))
+        # Main model views
+    from app.models import User, Comment, Exercise, WOD, Result
+    admin.add_view(ModelView(User, db.session)) #, name='Пользователь'))
+    admin.add_view(ModelView(Comment, db.session)) #, name='Комментарии'))
+    admin.add_view(ModelView(Exercise, db.session)) # , name='Упражнения'))
+    admin.add_view(ModelView(WOD, db.session)) # , name='Упражнения'))
+    admin.add_view(ModelView(Result, db.session)) #, name='Результаты'))
 
     # Test and Debug
     if not app.debug and not app.testing:

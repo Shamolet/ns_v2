@@ -5,7 +5,9 @@ from flask_login import UserMixin
 from app import db, login
 import jwt
 from time import time
-from app.user import constants as USER
+
+from app.constants import OTHER, ACTIVE, USER
+
 
 # Define the User data model.
 class User(db.Model, UserMixin):
@@ -17,14 +19,14 @@ class User(db.Model, UserMixin):
     email = db.Column(db.Unicode(255), nullable=False,
                       server_default=u'', unique=True)
     password_hash = db.Column(db.String(128))
-    sex = db.Column(db.SmallInteger, default=USER.OTHER)  # (0) man (1) woman
+    sex = db.Column(db.SmallInteger, default=OTHER)  # (0) man (1) woman
     bith = db.Column(db.DateTime, nullable=False, default=None)
     about_me = db.Column(db.String(280))
-    status = db.Column(db.SmallInteger, default=USER.ACTIVE)
+    status = db.Column(db.SmallInteger, default=ACTIVE)
     # User information
     registry = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-    role = db.Column(db.SmallInteger, default=USER.USER)
+    role = db.Column(db.SmallInteger, default=USER)
     # Relationships
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
     results = db.relationship('Result', backref='author', lazy='dynamic')
