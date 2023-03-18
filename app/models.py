@@ -19,7 +19,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.Unicode(255), nullable=False,
                       server_default=u'', unique=True)
     password_hash = db.Column(db.String(128))
-    sex = db.Column(db.SmallInteger, default=OTHER)  # (0) man (1) woman
+    sex = db.Column(db.SmallInteger, default=OTHER)  # (0) man (1) woman (2) other
     bith = db.Column(db.DateTime, nullable=False, default=None)
     about_me = db.Column(db.String(280))
     status = db.Column(db.SmallInteger, default=ACTIVE)

@@ -1,6 +1,8 @@
 from werkzeug.urls import url_parse
 from app.admin import bp
 from flask import render_template, redirect, url_for, flash,request
+
+from app.constants import USER
 from app.forms.auth_forms import LoginForm
 from flask_login import login_user, logout_user
 from app.models import User

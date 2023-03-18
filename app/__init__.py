@@ -80,22 +80,25 @@ def create_app(config_class=Config):
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
     # Admin part
-    class AdminUserView(ModelView):
+    class AdmUserView(ModelView):
         can_create = False
         column_display_pk = True
         column_exclude_list = ('password')
         form_overrides = dict(password=HiddenField)
 
+    class AdmViews(ModelView):
+        column_display_pk = True
+
     # Admin model views
     admin = Admin(app, name='Нескучка', template_mode='bootstrap3', endpoint='admin')
 
         # Main model views
-    from app.models import User, Comment, Exercise, WOD, Result
-    admin.add_view(ModelView(User, db.session)) #, name='Пользователь'))
-    admin.add_view(ModelView(Comment, db.session)) #, name='Комментарии'))
-    admin.add_view(ModelView(Exercise, db.session)) # , name='Упражнения'))
-    admin.add_view(ModelView(WOD, db.session)) # , name='Упражнения'))
-    admin.add_view(ModelView(Result, db.session)) #, name='Результаты'))
+    # from app.models import User, Comment, Exercise, WOD, Result
+    # admin.add_view(AdmUserView(User, db.session)) #, name='Пользователь'))
+    # admin.add_view(AdmViews(Comment, db.session)) #, name='Комментарии'))
+    # admin.add_view(AdmViews(Exercise, db.session)) # , name='Упражнения'))
+    # admin.add_view(AdmViews(WOD, db.session)) # , name='Упражнения'))
+    # admin.add_view(AdmViews(Result, db.session)) #, name='Результаты'))
 
     # Test and Debug
     if not app.debug and not app.testing:

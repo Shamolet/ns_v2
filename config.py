@@ -25,10 +25,3 @@ class Config(object):
     ADMINS = ['your-email@example.com']
     #Index
     WODS_PER_PAGE = 1
-
-class ProductionConfig(Config):
-    DEBUG = False
-
-class DevelopmentConfig(Config):
-    DEVELOPMENT = True
-    DEBUG = True
