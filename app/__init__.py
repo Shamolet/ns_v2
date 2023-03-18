@@ -2,6 +2,8 @@ import os #
 import logging #
 from logging.handlers import SMTPHandler, RotatingFileHandler #
 from flask import Flask #
+from flask_admin.contrib.fileadmin import FileAdmin
+from flask_admin.menu import MenuLink
 from flask_login import LoginManager #
 from flask_mail import Mail #
 from flask_migrate import Migrate #
@@ -13,6 +15,7 @@ from flask_admin import Admin #
 from flask_admin.contrib.sqla import ModelView #
 from sqlalchemy import MetaData #
 from config import Config #
+import os.path as op
 
 
 # Instantiate Flask extensions
@@ -80,25 +83,37 @@ def create_app(config_class=Config):
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
     # Admin part
-    class AdmUserView(ModelView):
+    class AdminUserView(ModelView):
         can_create = False
         column_display_pk = True
-        column_exclude_list = ('password')
+        column_exclude_list = ('password_hash')
         form_overrides = dict(password=HiddenField)
 
-    class AdmViews(ModelView):
+    class AdmCommentViews(ModelView):
+        column_display_pk = True
+
+    class AdmExerciseViews(ModelView):
+        column_display_pk = True
+
+    class AdmWODViews(ModelView):
+        column_display_pk = True
+
+    class AdmResultViews(ModelView):
         column_display_pk = True
 
     # Admin model views
     admin = Admin(app, name='Нескучка', template_mode='bootstrap3', endpoint='admin')
 
-        # Main model views
-    # from app.models import User, Comment, Exercise, WOD, Result
-    # admin.add_view(AdmUserView(User, db.session)) #, name='Пользователь'))
-    # admin.add_view(AdmViews(Comment, db.session)) #, name='Комментарии'))
-    # admin.add_view(AdmViews(Exercise, db.session)) # , name='Упражнения'))
-    # admin.add_view(AdmViews(WOD, db.session)) # , name='Упражнения'))
-    # admin.add_view(AdmViews(Result, db.session)) #, name='Результаты'))
+    # Main model views
+    from app.models.models import User, Comment, Exercise, WOD, Result
+    admin.add_view(AdminUserView(User, db.session)) # , name='Пользователь'))
+    admin.add_view(AdmCommentViews(Comment, db.session)) # , name='Комментарии'))
+    admin.add_view(AdmExerciseViews(Exercise, db.session)) # , name='Упражнения'))
+    admin.add_view(AdmWODViews(WOD, db.session)) # , name='Упражнения'))
+    admin.add_view(AdmResultViews(Result, db.session)) # , name='Результаты'))
+
+    admin.add_link(MenuLink(name='Profile', endpoint='user.profile'))
+    admin.add_link(MenuLink(name='Logout', endpoint='user.logout'))
 
     # Test and Debug
     if not app.debug and not app.testing:
