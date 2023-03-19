@@ -19,14 +19,14 @@ class User(db.Model, UserMixin):
     email = db.Column(db.Unicode(255), nullable=False,
                       server_default=u'', unique=True)
     password_hash = db.Column(db.String(128))
-    sex = db.Column(db.SmallInteger, default=OTHER)  # (0) man (1) woman (2) other
+    sex = db.Column(db.SmallInteger, default=OTHER)  # look at constants.py
     bith = db.Column(db.DateTime, nullable=False, default=None)
     about_me = db.Column(db.String(280))
-    status = db.Column(db.SmallInteger, default=ACTIVE)
+    status = db.Column(db.SmallInteger, default=ACTIVE)  # look at constants.py
     # User information
     registry = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-    role = db.Column(db.SmallInteger, default=USER)
+    role = db.Column(db.SmallInteger, default=USER)  # look at constants.py
     # Relationships
     comments = db.relationship('Comment', backref='author', lazy='dynamic')
     results = db.relationship('Result', backref='author', lazy='dynamic')
@@ -57,7 +57,7 @@ class User(db.Model, UserMixin):
             return
         return User.query.get(id)
 
-# Flask-Login user loader function
+# Flask-Login profile loader function
 @login.user_loader
 def load_user(id):
     return User.query.get(int(id))

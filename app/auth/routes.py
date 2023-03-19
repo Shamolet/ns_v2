@@ -2,15 +2,15 @@ from flask import render_template, redirect, url_for, flash, request
 from werkzeug.urls import url_parse
 from flask_login import login_user, logout_user, current_user
 from app import db
-from app.user.auth import bp
+from app.auth import auth
 from app.forms.auth_forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models.models import User
-from app.user.auth.email import send_password_reset_email
+from app.auth.email import send_password_reset_email
 
 
 
-@bp.route('/login', methods=['GET', 'POST'])
+@auth.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -18,7 +18,7 @@ def login():
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
-            flash('Invalid пароль или юзверь')
+            flash('Неверный пароль и/или имя пользователя')
             return redirect(url_for('auth.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
@@ -28,13 +28,13 @@ def login():
     return render_template('auth/login.html', title='Войти', form=form)
 
 
-@bp.route('/logout')
+@auth.route('/logout')
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
 
 
-@bp.route('/register', methods=['GET', 'POST'])
+@auth.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -50,7 +50,7 @@ def register():
                            form=form)
 
 
-@bp.route('/reset_password_request', methods=['GET', 'POST'])
+@auth.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -66,7 +66,7 @@ def reset_password_request():
                            title='Reset Password', form=form)
 
 
-@bp.route('/reset_password/<token>', methods=['GET', 'POST'])
+@auth.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))

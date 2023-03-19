@@ -2,7 +2,6 @@ import os #
 import logging #
 from logging.handlers import SMTPHandler, RotatingFileHandler #
 from flask import Flask #
-from flask_admin.contrib.fileadmin import FileAdmin
 from flask_admin.menu import MenuLink
 from flask_login import LoginManager #
 from flask_mail import Mail #
@@ -15,8 +14,6 @@ from flask_admin import Admin #
 from flask_admin.contrib.sqla import ModelView #
 from sqlalchemy import MetaData #
 from config import Config #
-import os.path as op
-
 
 # Instantiate Flask extensions
 convention = {
@@ -62,18 +59,22 @@ def create_app(config_class=Config):
     moment.init_app(app)
 
     # Register blueprints
-    # Errors
-    from app.errors import bp as errors_bp
-    app.register_blueprint(errors_bp)
+    # Main
+    from app.main import main
+    app.register_blueprint(main, url_prefix='/index')
     # Authentication
-    from app.user.auth import bp as auth_bp
-    app.register_blueprint(auth_bp, url_prefix='/auth')
+    from app.auth import auth
+    app.register_blueprint(auth, url_prefix='/auth')
     # User
-    from app.user import bp as user_bp
-    app.register_blueprint(user_bp)
+    from app.profile import profile
+    app.register_blueprint(profile)
     # Admin
-    from app.admin import bp as admin_bp
-    app.register_blueprint(admin_bp, url_prefix="/admin")
+    from app.admin import adm
+    app.register_blueprint(adm, url_prefix="/admin")
+    # Errors
+    from app.errors import errors
+    app.register_blueprint(errors)
+
     # Define bootstrap_is_hidden_field for flask-bootstrap's bootstrap_wtf.html
     from wtforms.fields import HiddenField
 
@@ -106,14 +107,14 @@ def create_app(config_class=Config):
 
     # Main model views
     from app.models.models import User, Comment, Exercise, WOD, Result
-    admin.add_view(AdminUserView(User, db.session)) # , name='Пользователь'))
-    admin.add_view(AdmCommentViews(Comment, db.session)) # , name='Комментарии'))
-    admin.add_view(AdmExerciseViews(Exercise, db.session)) # , name='Упражнения'))
-    admin.add_view(AdmWODViews(WOD, db.session)) # , name='Упражнения'))
-    admin.add_view(AdmResultViews(Result, db.session)) # , name='Результаты'))
+    admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
+    admin.add_view(AdmCommentViews(Comment, db.session, name='Комментарии'))
+    admin.add_view(AdmExerciseViews(Exercise, db.session, name='Упражнения'))
+    admin.add_view(AdmWODViews(WOD, db.session, name='Упражнения'))
+    admin.add_view(AdmResultViews(Result, db.session, name='Результаты'))
 
-    admin.add_link(MenuLink(name='Profile', endpoint='user.profile'))
-    admin.add_link(MenuLink(name='Logout', endpoint='user.logout'))
+    admin.add_link(MenuLink(name='Profile', endpoint='profile.profile'))
+    admin.add_link(MenuLink(name='Logout', endpoint='profile.logout'))
 
     # Test and Debug
     if not app.debug and not app.testing:
