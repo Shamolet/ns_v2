@@ -95,7 +95,7 @@ class WOD(db.Model):
     __tablename__ = "wods"
 
     id = db.Column(db.Integer, primary_key=True)
-    wod_name = db.Column(db.String(100), unique=False, nullable=False)
+    wod_name = db.Column(db.String(100), unique=False, nullable=False, default=None)
     description = db.Column(db.Text(200), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     exercises = db.relationship("exercises.id", backref='author', lazy=True)
