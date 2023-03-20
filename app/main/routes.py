@@ -7,11 +7,11 @@ from app.models.models import WOD
 from app.main import main
 
 
-@main.before_app_request
-def before_request():
-    if current_user.is_authenticated:
-        current_user.last_seen = datetime.utcnow()
-        db.session.commit()
+# @main.before_app_request
+# def before_request():
+#     if current_user.is_authenticated:
+#         current_user.last_seen = datetime.utcnow()
+#         db.session.commit()
 
 
 

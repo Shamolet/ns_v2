@@ -17,24 +17,8 @@ def before_request():
 @profile.route('/profile/<username>')
 @login_required
 def user(username):
-    form = PostForm()
-    if form.validate_on_submit():
-        post = Post(body=form.post.data, author=current_user)
-        db.session.add(post)
-        db.session.commit()
-        flash('Твой пост опубликован!')
-        return redirect(url_for('main.index'))
-    page = request.args.get('page', 1, type=int)
-    posts = current_user.followed_posts().paginate(
-        page=page, per_page=current_app.config['POSTS_PER_PAGE'],
-        error_out=False)
-    next_url = url_for('main.index', page=posts.next_num) \
-        if posts.has_next else None
-    prev_url = url_for('main.index', page=posts.prev_num) \
-        if posts.has_prev else None
-    return render_template('index.html', title='Домашняя', form=form,
-                           posts=posts.items, next_url=next_url,
-                           prev_url=prev_url)
+    user = User.query.filter_by(username=username).first_or_404()
+    return render_template('profile.html', title='Аккаунт пользователя', user=user)
 
 
 @profile.route('/edit_profile', methods=['GET', 'POST'])
@@ -46,7 +30,7 @@ def edit_profile():
         current_user.about_me = form.about_me.data
         db.session.commit()
         flash('Изменения сохранены.')
-        return redirect(url_for('main.edit_profile'))
+        return redirect(url_for('profile.errors.edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me

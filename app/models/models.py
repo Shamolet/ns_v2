@@ -28,11 +28,10 @@ class User(db.Model, UserMixin):
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     role = db.Column(db.SmallInteger, default=USER)  # look at constants.py
     # Relationships
-    comments = db.relationship('Comment', backref='author', lazy='dynamic')
-    results = db.relationship('Result', backref='author', lazy='dynamic')
-    wods = db.relationship('WOD', backref='author', lazy='dynamic')
-    exercises = db.relationship('Exercise', backref='author', lazy='dynamic')
-
+    # comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    # results = db.relationship('Result', backref='author', lazy='dynamic')
+    # wods = db.relationship('WOD', backref='author', lazy='dynamic')
+    # exercises = db.relationship('Exercise', backref='author', lazy='dynamic')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -57,6 +56,7 @@ class User(db.Model, UserMixin):
             return
         return User.query.get(id)
 
+
 # Flask-Login profile loader function
 @login.user_loader
 def load_user(id):
@@ -70,7 +70,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(280))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
         return '<Comment {}>'.format(self.body)
@@ -86,8 +86,8 @@ class Exercise(db.Model):
     modality = db.Column(db.Integer, unique=False, nullable=False)
     # modality (0) metabolic (1) gymnastic (2) external object
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    wod_id = db.Column(db.Integer, db.ForeignKey("wods.id"))
+    # user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    # wod_id = db.Column(db.Integer, db.ForeignKey("wods.id"))
 
 
 # Define the WOD data model.
@@ -98,9 +98,10 @@ class WOD(db.Model):
     wod_name = db.Column(db.String(100), unique=False, nullable=False, default=None)
     description = db.Column(db.Text(200), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    exercises = db.relationship("exercises.id", backref='author', lazy=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    comments_id = db.Column(db.Integer, db.ForeignKey("comments.id"), nullable=True)
+    # Relationship User(Many), Comment() Exercise
+    # user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    # comment_id = db.Column(db.Integer, db.ForeignKey("comments.id"), nullable=True)
+    # exercises = db.relationship("exercises.id", backref='author', lazy=True)
 
 
 # Define the Results data model.
@@ -112,5 +113,5 @@ class Result(db.Model):
     result = db.Column(db.String(200), unique=False, nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User, Exercise
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
-    exercises = db.relationship("exercises.id", backref='author', lazy=True)
+    # user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    # exercises = db.relationship("exercises.id", backref='author', lazy=True)
