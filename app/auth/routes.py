@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from flask import render_template, redirect, url_for, flash, request
 from flask_login import logout_user, current_user, login_user
 from werkzeug.urls import url_parse
@@ -9,6 +11,11 @@ from app.models.models import User
 from app.auth.email import send_password_reset_email
 
 
+@auth.before_app_request
+def before_request():
+    if current_user.is_authenticated:
+        current_user.last_seen = datetime.utcnow()
+        db.session.commit()
 
 @auth.route('/login', methods=['GET', 'POST'])
 def login():

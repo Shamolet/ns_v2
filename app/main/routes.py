@@ -12,8 +12,8 @@ def before_request():
         db.session.commit()
 
 
-@main.route('/', methods=['GET', 'POST'])
-@main.route('/index', methods=['GET', 'POST'])
+@main.route('/')  # , methods=['GET', 'POST'])
+@main.route('/index')  # , methods=['GET', 'POST'])
 @login_required
 def index():
     return render_template('index.html', title='Домашняя')
