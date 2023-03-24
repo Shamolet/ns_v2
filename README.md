@@ -6,7 +6,8 @@ flask db init
 flask db migrate
 flask db update
 3. запуск проекта ns.py
-4. в /app все кишки
+4. в /app все кишки.
+5. В констант роли для БД
 
 
 
