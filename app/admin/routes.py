@@ -7,7 +7,7 @@ from flask_login import login_user, logout_user, login_required
 from app.models.models import User
 
 
-@adm.route('/', methods=['GET', 'POST'])
+@adm.route('/admin', methods=['GET', 'POST'])
 @login_required
 def admin_login():
     form = LoginForm()
@@ -22,7 +22,7 @@ def admin_login():
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('main.index')
         return redirect(next_page)
-    return render_template('admin.html', title='Админ-панель', form=form)
+    return render_template('admin.admin.html', title='Админ-панель', form=form)
 
 
 @adm.route('/logout')

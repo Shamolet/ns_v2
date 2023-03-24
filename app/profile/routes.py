@@ -18,7 +18,7 @@ def before_request():
 @login_required
 def user(username):
     user = User.query.filter_by(username=username).first_or_404()
-    return render_template('profile.html', title='Аккаунт пользователя', user=user)
+    return render_template('profile/profile.html', title='Аккаунт пользователя', user=user)
 
 
 @profile.route('/edit_profile', methods=['GET', 'POST'])
@@ -34,5 +34,5 @@ def edit_profile():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', title='Редактировать профиль',
+    return render_template('profile/edit_profile.html', title='Редактировать профиль',
                            form=form)

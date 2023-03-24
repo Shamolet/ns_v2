@@ -61,7 +61,7 @@ def create_app(config_class=Config):
     # Register blueprints
     # Main
     from app.main import main
-    app.register_blueprint(main, url_prefix='/index')
+    app.register_blueprint(main)
     # Authentication
     from app.auth import auth
     app.register_blueprint(auth, url_prefix='/auth')

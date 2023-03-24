@@ -6,7 +6,7 @@ from app import db, login
 import jwt
 from time import time
 
-from app.constants import OTHER, ACTIVE, USER
+from app import constants
 
 
 # Define the User data model.
@@ -19,14 +19,14 @@ class User(db.Model, UserMixin):
     email = db.Column(db.Unicode(255), nullable=False,
                       server_default=u'', unique=True)
     password_hash = db.Column(db.String(128))
-    sex = db.Column(db.SmallInteger, default=OTHER)  # look at constants.py
-    bith = db.Column(db.DateTime, nullable=False, default=None)
+    sex = db.Column(db.SmallInteger, default=constants.OTHER)  # look at constants.py
+    bith = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     about_me = db.Column(db.String(280))
-    status = db.Column(db.SmallInteger, default=ACTIVE)  # look at constants.py
+    status = db.Column(db.SmallInteger, default=constants.ACTIVE)  # look at constants.py
     # User information
     registry = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-    role = db.Column(db.SmallInteger, default=USER)  # look at constants.py
+    role = db.Column(db.SmallInteger, default=constants.USER)  # look at constants.py
     # Relationships
     # comments = db.relationship('Comment', backref='author', lazy='dynamic')
     # results = db.relationship('Result', backref='author', lazy='dynamic')

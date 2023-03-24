@@ -1,13 +1,16 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, TextAreaField
+from wtforms import StringField, SubmitField, TextAreaField, DateField
 from wtforms.validators import DataRequired, Length
 
 
 
 class EditProfileForm(FlaskForm):
     username = StringField('Никнейм', validators=[DataRequired()])
+
     about_me = TextAreaField('Обо мне',
                              validators=[Length(min=0, max=140)])
+    bith = DateField('DatePicker', format='%Y-%m-%d')
+
     submit = SubmitField('Тык')
 
     def __init__(self, original_username, *args, **kwargs):

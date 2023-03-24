@@ -2,7 +2,7 @@
 ADMIN = 0
 STAFF = 1
 USER = 2
-USER = {
+ROLE = {
     ADMIN: 'admin',
     STAFF: 'staff',
     USER: 'пользователь',
@@ -23,5 +23,5 @@ OTHER = 2
 SEX = {
     MAN: 'мужчина',
     WOMEN: 'женщина',
-    OTHER: '-'
+    OTHER: '-',
 }
