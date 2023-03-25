@@ -27,11 +27,11 @@ def admin_login():
                                     role=USER.ADMIN).first()
         if user is None or not user.check_password(form.password.data):
             flash('Неверный пароль и/или имя пользователя')
-            return redirect(url_for('admin.entry'))
+            return redirect(url_for('admin.admin_login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
-            next_page = url_for('main.index')
+            next_page = url_for('admin.admin_login')
         return redirect(next_page)
     return render_template('admin.admin.html', title='Админ-панель', form=form)
 
@@ -39,4 +39,4 @@ def admin_login():
 @adm.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('main.index'))
+    return redirect(url_for('admin.admin_login'))
