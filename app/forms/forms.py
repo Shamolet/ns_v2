@@ -9,7 +9,7 @@ class EditProfileForm(FlaskForm):
 
     about_me = TextAreaField('Обо мне',
                              validators=[Length(min=0, max=140)])
-    bith = DateField('DatePicker', format='%Y-%m-%d')
+    bith = DateField('Дата рождения', format='%Y-%m-%d', validators=[DataRequired()])
 
     submit = SubmitField('Тык')
 

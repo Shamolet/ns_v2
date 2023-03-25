@@ -20,7 +20,7 @@ class User(db.Model, UserMixin):
                       server_default=u'', unique=True)
     password_hash = db.Column(db.String(128))
     sex = db.Column(db.SmallInteger, default=constants.OTHER)  # look at constants.py
-    bith = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
+    birth = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     about_me = db.Column(db.String(280))
     status = db.Column(db.SmallInteger, default=constants.ACTIVE)  # look at constants.py
     # User information

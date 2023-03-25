@@ -14,15 +14,16 @@ def before_request():
         db.session.commit()
 
 
-@main.route('/')  # , methods=['GET', 'POST'])
-@main.route('/index')  # , methods=['GET', 'POST'])
+@main.route('/', methods=['GET', 'POST'])
+@main.route('/index', methods=['GET', 'POST'])
 @login_required
 def index():
-    return render_template('index.html', title='Домашняя')
+    user = {'username': 'KIM'}
+    return render_template('index.html', title='Домашняя', user=user)
 
 @main.route('/profile/<username>')
 @login_required
-def user(username):
+def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
 
     return render_template('profile/profile.html', user=user)
@@ -35,12 +36,14 @@ def edit_profile():
     if form.validate_on_submit():
         current_user.username = form.username.data
         current_user.about_me = form.about_me.data
+
         db.session.commit()
         flash('Изменения сохранены.')
         return redirect(url_for('profile.edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
+
     return render_template('profile/edit_profile.html', title='Редактировать профиль',
                            form=form)
 
