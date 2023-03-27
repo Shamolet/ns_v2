@@ -1,13 +1,13 @@
 # ns_v2
 
-1. Библиотеки в требованиях /base
+1. Библиотеки: requirements/base
 2. БД старт:
 flask db init
 flask db migrate
 flask db update
 3. запуск проекта ns.py
 4. в /app все кишки.
-5. В констант роли для БД
+5. В constants.py роли для БД
 
 
 
