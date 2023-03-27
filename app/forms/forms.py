@@ -3,7 +3,6 @@ from wtforms import StringField, SubmitField, TextAreaField, DateField
 from wtforms.validators import DataRequired, Length
 
 
-
 class EditProfileForm(FlaskForm):
     username = StringField('Никнейм', validators=[DataRequired()])
 
@@ -25,6 +24,7 @@ class EmptyForm(FlaskForm):
 class CommentForm(FlaskForm):
     comment = TextAreaField('Черкни что-нибудь', validators=[DataRequired()])
     submit = SubmitField('Тык')
+
 
 class ResultForm(FlaskForm):
     result = StringField('Результат', validators=[DataRequired()])

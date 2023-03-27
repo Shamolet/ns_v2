@@ -7,14 +7,13 @@ load_dotenv(os.path.join(basedir, '.env'))
 
 
 # Settings
-#class Config(object):
+# class Config(object):
 class Config(object):
-
     DEBUG = True
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'you-will-never-guess'
     # SQLAlchemy settings
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-                          'sqlite:///' + os.path.join(basedir, 'app.db')
+                              'sqlite:///' + os.path.join(basedir, 'app.db')
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     # Flask-Mail settings
     MAIL_SERVER = os.environ.get('MAIL_SERVER')
@@ -23,5 +22,5 @@ class Config(object):
     MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
     MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
     ADMINS = ['your-email@example.com']
-    #Index
+    # Index
     WODS_PER_PAGE = 1

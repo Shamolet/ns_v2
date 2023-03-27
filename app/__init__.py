@@ -1,19 +1,19 @@
-import os #
-import logging #
-from logging.handlers import SMTPHandler, RotatingFileHandler #
-from flask import Flask #
+import os
+import logging
+from logging.handlers import SMTPHandler, RotatingFileHandler
+from flask import Flask
 from flask_admin.menu import MenuLink
-from flask_login import LoginManager #
-from flask_mail import Mail #
-from flask_migrate import Migrate #
-from flask_moment import Moment #
-from flask_sqlalchemy import SQLAlchemy #
-from flask_wtf.csrf import CSRFProtect #
-from flask_bootstrap import Bootstrap #
-from flask_admin import Admin #
-from flask_admin.contrib.sqla import ModelView #
-from sqlalchemy import MetaData #
-from config import Config #
+from flask_login import LoginManager
+from flask_mail import Mail
+from flask_migrate import Migrate
+from flask_moment import Moment
+from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
+from flask_bootstrap import Bootstrap
+from flask_admin import Admin
+from flask_admin.contrib.sqla import ModelView
+from sqlalchemy import MetaData
+from config import Config
 
 # Instantiate Flask extensions
 convention = {
