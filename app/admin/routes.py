@@ -9,6 +9,7 @@ from app.forms.auth_forms import LoginForm
 from flask_login import login_user, logout_user, login_required, current_user
 from app.models.models import User
 
+
 @adm.before_app_request
 def before_request():
     if current_user.is_authenticated:

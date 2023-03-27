@@ -21,6 +21,7 @@ def index():
     user = {'username': 'KIM'}
     return render_template('index.html', title='Домашняя', user=user)
 
+
 @main.route('/profile/<username>')
 @login_required
 def profile(username):
@@ -46,5 +47,3 @@ def edit_profile():
 
     return render_template('profile/edit_profile.html', title='Редактировать профиль',
                            form=form)
-
-

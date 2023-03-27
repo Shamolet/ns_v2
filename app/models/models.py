@@ -27,6 +27,7 @@ class User(db.Model, UserMixin):
     registry = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
     role = db.Column(db.SmallInteger, default=constants.USER)  # look at constants.py
+
     # Relationships
     # comments = db.relationship('Comment', backref='author', lazy='dynamic')
     # results = db.relationship('Result', backref='author', lazy='dynamic')
@@ -52,7 +53,7 @@ class User(db.Model, UserMixin):
         try:
             id = jwt.decode(token, current_app.config['SECRET_KEY'],
                             algorithms=['HS256'])['reset_password']
-        except:
+        except Exception:
             return
         return User.query.get(id)
 
@@ -70,6 +71,7 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.String(280))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+
     # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
     def __repr__(self):
