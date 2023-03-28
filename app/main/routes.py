@@ -16,7 +16,6 @@ def before_request():
 
 @main.route('/', methods=['GET', 'POST'])
 @main.route('/index', methods=['GET', 'POST'])
-@login_required
 def index():
     user = {'username': 'KIM'}
     return render_template('index.html', title='Домашняя', user=user)
