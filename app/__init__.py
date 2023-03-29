@@ -65,12 +65,6 @@ def create_app(config_class=Config):
     # Authentication
     from app.auth import auth
     app.register_blueprint(auth, url_prefix='/auth')
-    # User
-    from app.profile import profile
-    app.register_blueprint(profile)
-    # Admin
-    from app.admin import adm
-    app.register_blueprint(adm, url_prefix="/admin")
     # Errors
     from app.errors import errors
     app.register_blueprint(errors)
@@ -113,8 +107,8 @@ def create_app(config_class=Config):
     admin.add_view(AdmWODViews(WOD, db.session, name='Упражнения'))
     admin.add_view(AdmResultViews(Result, db.session, name='Результаты'))
 
-    admin.add_link(MenuLink(name='Profile', endpoint='profile.profile'))
-    admin.add_link(MenuLink(name='Logout', endpoint='profile.logout'))
+    admin.add_link(MenuLink(name='Profile', endpoint='main.profile'))
+    admin.add_link(MenuLink(name='Logout', endpoint='main.logout'))
 
     # Test and Debug
     if not app.debug and not app.testing:
@@ -134,6 +128,7 @@ def create_app(config_class=Config):
             mail_handler.setLevel(logging.ERROR)
             app.logger.addHandler(mail_handler)
 
+        #logs
         if not os.path.exists('logs'):
             os.mkdir('logs')
         file_handler = RotatingFileHandler('logs/ns.log',

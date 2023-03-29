@@ -26,7 +26,7 @@ def index():
 def profile(username):
     user = User.query.filter_by(username=username).first_or_404()
 
-    return render_template('profile/profile.html', user=user)
+    return render_template('main/profile.html', user=user)
 
 
 @main.route('/edit_profile', methods=['GET', 'POST'])
@@ -39,10 +39,26 @@ def edit_profile():
 
         db.session.commit()
         flash('Изменения сохранены.')
-        return redirect(url_for('profile.edit_profile'))
+        return redirect(url_for('main.edit_profile'))
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
 
-    return render_template('profile/edit_profile.html', title='Редактировать профиль',
+    return render_template('main/edit_profile.html', title='Редактировать профиль',
                            form=form)
+
+@main.route('/wod')
+def wod():
+    return render_template('main/wods.html', title='Тренировки')
+
+@main.route('/exersises')
+def exercises():
+    return render_template('main/exercises.html', title='Каталок движений')
+
+@main.route('/exersises/<exercise_name>')
+def exercise_name():
+    return render_template('main/exercise_name.html')
+
+@main.route('/admin')
+def admin():
+    return render_template('main/admin.html')
