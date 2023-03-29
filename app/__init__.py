@@ -78,37 +78,36 @@ def create_app(config_class=Config):
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
     # Admin part
-    class AdminUserView(ModelView):
-        can_create = False
-        column_display_pk = True
-        column_exclude_list = ('password_hash')
-        form_overrides = dict(password=HiddenField)
+    # class AdminUserView(ModelView):
+    #     can_create = False
+    #     column_display_pk = True
+    #     column_exclude_list = ('password_hash')
+    #     form_overrides = dict(password=HiddenField)
 
-    class AdmCommentViews(ModelView):
-        column_display_pk = True
-
-    class AdmExerciseViews(ModelView):
-        column_display_pk = True
-
-    class AdmWODViews(ModelView):
-        column_display_pk = True
-
-    class AdmResultViews(ModelView):
-        column_display_pk = True
+    # class AdmCommentViews(ModelView):
+    #     column_display_pk = True
+    #
+    # class AdmExerciseViews(ModelView):
+    #     column_display_pk = True
+    #
+    # class AdmWODViews(ModelView):
+    #     column_display_pk = True
+    #
+    # class AdmResultViews(ModelView):
+    #     column_display_pk = True
 
     # Admin model views
-    admin = Admin(app, name='Нескучка', template_mode='bootstrap3', endpoint='admin')
+    admin = Admin(app, name='Нескучка', template_mode='bootstrap3')
 
     # Main model views
     from app.models.models import User, Comment, Exercise, WOD, Result
-    admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
-    admin.add_view(AdmCommentViews(Comment, db.session, name='Комментарии'))
-    admin.add_view(AdmExerciseViews(Exercise, db.session, name='Упражнения'))
-    admin.add_view(AdmWODViews(WOD, db.session, name='Упражнения'))
-    admin.add_view(AdmResultViews(Result, db.session, name='Результаты'))
+    admin.add_view(ModelView(User, db.session, name='Пользователь'))
+    # admin.add_view(AdmWODViews(WOD, db.session, name='Упражнения'))
+    # admin.add_view(AdmCommentViews(Comment, db.session, name='Комментарии'))
+    # admin.add_view(AdmExerciseViews(Exercise, db.session, name='Упражнения'))
+    # admin.add_view(AdmResultViews(Result, db.session, name='Результаты'))
 
-    admin.add_link(MenuLink(name='Profile', endpoint='main.profile'))
-    admin.add_link(MenuLink(name='Logout', endpoint='main.logout'))
+    # admin.add_link(MenuLink(name='Logout', endpoint='main.logout'))
 
     # Test and Debug
     if not app.debug and not app.testing:
@@ -128,7 +127,7 @@ def create_app(config_class=Config):
             mail_handler.setLevel(logging.ERROR)
             app.logger.addHandler(mail_handler)
 
-        #logs
+        # logs
         if not os.path.exists('logs'):
             os.mkdir('logs')
         file_handler = RotatingFileHandler('logs/ns.log',

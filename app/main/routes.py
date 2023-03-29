@@ -47,18 +47,23 @@ def edit_profile():
     return render_template('main/edit_profile.html', title='Редактировать профиль',
                            form=form)
 
+
 @main.route('/wod')
 def wod():
     return render_template('main/wods.html', title='Тренировки')
+
 
 @main.route('/exersises')
 def exercises():
     return render_template('main/exercises.html', title='Каталок движений')
 
+
 @main.route('/exersises/<exercise_name>')
 def exercise_name():
     return render_template('main/exercise_name.html')
 
-@main.route('/admin')
-def admin():
+
+@main.get('/adm')
+def adm():
+
     return render_template('main/admin.html')

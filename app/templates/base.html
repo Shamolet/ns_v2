@@ -20,7 +20,7 @@
                 <ul class="nav navbar-nav">
                     <li><a href="{{ url_for('main.index') }}">Домашняя</a></li>
                     <li><a href="{{ url_for('main.wod') }}">Тренировки</a></li>
-                    <li><a href="{{ url_for('main.admin') }}">Упражнения|Йепаная админка</a></li>
+                    <li><a href="{{ url_for('main.adm') }}">Упражнения|Йепаная админка</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}
