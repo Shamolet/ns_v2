@@ -2,7 +2,7 @@ import os
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 from flask import Flask
-# from flask_admin.menu import MenuLink
+from flask_admin.menu import MenuLink
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
@@ -90,7 +90,7 @@ def create_app(config_class=Config):
     admin.add_view(ModelView(Exercise, db.session, name='Упражнения'))
     admin.add_view(ModelView(Result, db.session, name='Результаты'))
 
-    # admin.add_link(MenuLink(name='Logout', endpoint='main.logout'))
+    admin.add_link(MenuLink(name='Выход', endpoint='main.index'))
 
     # Test and Debug
     if not app.debug and not app.testing:
