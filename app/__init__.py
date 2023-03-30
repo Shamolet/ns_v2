@@ -2,7 +2,7 @@ import os
 import logging
 from logging.handlers import SMTPHandler, RotatingFileHandler
 from flask import Flask
-from flask_admin.menu import MenuLink
+# from flask_admin.menu import MenuLink
 from flask_login import LoginManager
 from flask_mail import Mail
 from flask_migrate import Migrate
@@ -97,10 +97,10 @@ def create_app(config_class=Config):
     #     column_display_pk = True
 
     # Admin model views
-    admin = Admin(app, name='Нескучка', template_mode='bootstrap3')
+    admin = Admin(app, name='Админка', template_mode='bootstrap3')
 
     # Main model views
-    from app.models.models import User, Comment, Exercise, WOD, Result
+    from app.models.models import User  # , Comment, Exercise, WOD, Result
     admin.add_view(ModelView(User, db.session, name='Пользователь'))
     # admin.add_view(AdmWODViews(WOD, db.session, name='Упражнения'))
     # admin.add_view(AdmCommentViews(Comment, db.session, name='Комментарии'))

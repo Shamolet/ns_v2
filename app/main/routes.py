@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request
+from flask_admin import BaseView, expose
 from flask_login import current_user, login_required
 from app import db
 from app.forms.forms import EditProfileForm
@@ -63,7 +64,9 @@ def exercise_name():
     return render_template('main/exercise_name.html')
 
 
-@main.get('/adm')
-def adm():
+class AnyPageView(BaseView):
+    @expose('/')
+    def any_page(self):
+        return render_template('main/admin.html')
 
-    return render_template('main/admin.html')
+
