@@ -25,3 +25,14 @@ SEX = {
     WOMEN: 'женщина',
     OTHER: '-',
 }
+
+
+# modality
+METABOLIC = 0
+GYMNASTIC = 1
+EXTERNAL_OBJECT = 2
+MODALITY = {
+    METABOLIC: 'метаболика',
+    GYMNASTIC: 'гимнастика',
+    EXTERNAL_OBJECT: 'ынешние объекты',
+}

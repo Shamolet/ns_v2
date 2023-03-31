@@ -77,18 +77,57 @@ def create_app(config_class=Config):
 
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
+    # Indivirual Admin part
+    class AdminUserView(ModelView):
+        can_edit = True
+        can_create = True
+        can_delete = True
+        can_view_details = True
 
+        form_columns = ['username', 'email', 'birth']
+
+    class AdmExerciseView(ModelView):
+        can_edit = True
+        can_create = True
+        can_delete = True
+        can_view_details = True
+
+        form_columns = ['exercise_name', 'description']
+
+    class AdmWODView(ModelView):
+        can_edit = True
+        can_create = True
+        can_delete = True
+        can_view_details = True
+
+        form_columns = ['wod_name', 'description']
+
+    class AdmCommentView(ModelView):
+        can_edit = True
+        can_create = True
+        can_delete = True
+        can_view_details = True
+
+        form_columns = ['body']
+
+    class AdmResultView(ModelView):
+        can_edit = True
+        can_create = True
+        can_delete = True
+        can_view_details = True
+
+        form_columns = ['result']
 
     # Admin model views
     admin = Admin(app, name='Админка', template_mode='bootstrap3')
 
     # Main model views
     from app.models.models import User, Comment, Exercise, WOD, Result
-    admin.add_view(ModelView(User, db.session, name='Пользователь'))
-    admin.add_view(ModelView(WOD, db.session, name='Упражнения'))
-    admin.add_view(ModelView(Comment, db.session, name='Комментарии'))
-    admin.add_view(ModelView(Exercise, db.session, name='Упражнения'))
-    admin.add_view(ModelView(Result, db.session, name='Результаты'))
+    admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
+    admin.add_view(AdmWODView(WOD, db.session, name='Упражнения'))
+    admin.add_view(AdmCommentView(Comment, db.session, name='Комментарии'))
+    admin.add_view(AdmExerciseView(Exercise, db.session, name='Упражнения'))
+    admin.add_view(AdmResultView(Result, db.session, name='Результаты'))
 
     admin.add_link(MenuLink(name='Выход', endpoint='main.index'))
 

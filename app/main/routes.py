@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 from app import db
 from app.forms.forms import EditProfileForm
 from app.main import main
-from app.models.models import User
+from app.models.models import User, Exercise
 
 
 @main.before_app_request
@@ -54,19 +54,25 @@ def wod():
     return render_template('main/wods.html', title='Тренировки')
 
 
-@main.route('/exersises')
+@main.route('/exercises')
 def exercises():
-    return render_template('main/exercises.html', title='Каталок движений')
+    return render_template('main/exercises_list.html', title='Каталог движений')
 
 
-@main.route('/exersises/<exercise_name>')
-def exercise_name():
-    return render_template('main/exercise_name.html')
+@main.route('/exercises/<modality>')
+def mode(modality):
+
+    return render_template('main/modality_list.html', modality=modality, title='Модальность')
+
+
+@main.route('/exercises/<modality>/<exercise_name>')
+def exercise(modality, exercise_name):
+
+    return render_template('main/exercise_name.html', exercise_name=exercise_name,
+                           modality=modality, title=exercise)
 
 
 class AnyPageView(BaseView):
     @expose('/')
     def any_page(self):
         return render_template('main/admin.html')
-
-
