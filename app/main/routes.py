@@ -22,6 +22,7 @@ def index():
     return render_template('index.html', title='Домашняя', user=user)
 
 
+# Block Users
 @main.route('/profile/<username>')
 @login_required
 def profile(username):
@@ -49,11 +50,17 @@ def edit_profile():
                            form=form)
 
 
-@main.route('/wod')
-def wod():
-    return render_template('main/wods.html', title='Тренировки')
+# Block WODs lib
+@main.route('/wods')
+def wods_list():
+    return render_template('main/wods_list.html', title='Список тренировок')
+
+@main.route('/wods/<wod>')
+def wod_name(wod):
+    return render_template('main/wod.html', wod=wod, title='Тренировка дня')
 
 
+# Block Exercises Lib
 @main.route('/exercises')
 def exercises():
     return render_template('main/exercises_list.html', title='Каталог движений')
