@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<h2>Форма представления Упражнений</h2>
+
+<h3>{{ detail.exercise_name }}</h3>
+
+<br>
+<h4>Исходное положение</h4>
+{{ detail.ip }}
+<br>
+<h4>Описание</h4>
+{{ detail.description }}
+<br>
+<h4>Примечание</h4>
+{{ detail.note }}
+<br>
+<br>
+        <a href="{{ url_for('main.exercises')}} ">
+            К списку упражнений</a>
+<br>
+
+{% endblock %}

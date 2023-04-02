@@ -63,20 +63,16 @@ def wod_name(wod):
 # Block Exercises Lib
 @main.route('/exercises')
 def exercises():
-    return render_template('main/exercises_list.html', title='Каталог движений')
+    exercises_list = Exercise.query.order_by(Exercise.exercise_name.asc()).all()
+    return render_template('main/exercises_list.html',
+                           exercises_list=exercises_list, title='Каталог движений')
 
 
-@main.route('/exercises/<modality>')
-def mode(modality):
-
-    return render_template('main/modality_list.html', modality=modality, title='Модальность')
-
-
-@main.route('/exercises/<modality>/<exercise_name>')
-def exercise(modality, exercise_name):
-
-    return render_template('main/exercise_name.html', exercise_name=exercise_name,
-                           modality=modality, title=exercise)
+@main.route('/exercises/<int:id>')
+def exercise_detail(id):
+    detail = Exercise.query.get(id)
+    return render_template('main/exercise_detail.html',
+                           detail=detail)
 
 
 class AnyPageView(BaseView):

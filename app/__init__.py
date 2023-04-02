@@ -84,7 +84,8 @@ def create_app(config_class=Config):
         can_delete = True
         can_view_details = True
 
-        form_columns = ['username', 'email', 'birth']
+        form_columns = ['username', 'role']
+
 
     class AdmExerciseView(ModelView):
         can_edit = True
@@ -92,7 +93,8 @@ def create_app(config_class=Config):
         can_delete = True
         can_view_details = True
 
-        form_columns = ['exercise_name', 'description']
+        form_columns = ['exercise_name', 'ip', 'description', 'note']
+
 
     class AdmWODView(ModelView):
         can_edit = True
@@ -100,7 +102,8 @@ def create_app(config_class=Config):
         can_delete = True
         can_view_details = True
 
-        form_columns = ['wod_name', 'description']
+        form_columns = ['wod_name', 'warm_up', 'workout', 'description']
+
 
     class AdmCommentView(ModelView):
         can_edit = True
@@ -124,9 +127,9 @@ def create_app(config_class=Config):
     # Main model views
     from app.models.models import User, Comment, Exercise, WOD, Result
     admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
-    admin.add_view(AdmWODView(WOD, db.session, name='Упражнения'))
-    admin.add_view(AdmCommentView(Comment, db.session, name='Комментарии'))
+    admin.add_view(AdmWODView(WOD, db.session, name='Тренировки'))
     admin.add_view(AdmExerciseView(Exercise, db.session, name='Упражнения'))
+    admin.add_view(AdmCommentView(Comment, db.session, name='Комментарии'))
     admin.add_view(AdmResultView(Result, db.session, name='Результаты'))
 
     admin.add_link(MenuLink(name='Выход', endpoint='main.index'))

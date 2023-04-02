@@ -84,8 +84,10 @@ class Exercise(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     exercise_name = db.Column(db.String(280), unique=True, nullable=False)
+    ip = db.Column(db.Text(200), nullable=False)
     description = db.Column(db.Text(200), nullable=False)
-    modality = db.Column(db.Integer, unique=False, nullable=False)
+    note = db.Column(db.Text(200), nullable=False)
+    modality = db.Column(db.SmallInteger, default=constants.METABOLIC)
     # modality (0) metabolic (1) gymnastic (2) external object
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     # user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
@@ -98,6 +100,8 @@ class WOD(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     wod_name = db.Column(db.String(100), unique=False, nullable=False, default=None)
+    warm_up = db.Column(db.Text(200), nullable=False)
+    workout = db.Column(db.Text(200), nullable=False)
     description = db.Column(db.Text(200), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User(Many), Comment() Exercise

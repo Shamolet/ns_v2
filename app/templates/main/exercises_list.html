@@ -1,16 +1,23 @@
 {% extends "base.html" %}
 
 {% block app_content %}
-<H2>Форма представления Списка упражнений</H2>
-
-3 блока Гимнастика/Метаболика/Внешние объекты (заголовки кликабельны)
+<h2>Список упражнений</h2>
 
 <br>
-в алфовитном порядке представлены 5-10 первых упражнений
+Прикрутить поиск по модальностям
 <br>
-снизу кнопка <a href="{{ url_for('main.mode', modality='gymnastic') }}">
-    переход в модальность
-</a>
+<br>
+<li>Упражнение в списке кликабельно</li>
+<li>Список упражнений в алфовитном порядке</li>
+<br>
+    {% for exercise in exercises_list %}
+        <a href="{{ url_for('main.exercise_detail',
+        id=exercise.id) }} ">
+            {{ exercise.exercise_name }}</a>
+<br>
+
+
+    {% endfor %}
 <br>
 
 
