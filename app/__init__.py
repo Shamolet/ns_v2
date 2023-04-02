@@ -86,7 +86,6 @@ def create_app(config_class=Config):
 
         form_columns = ['username', 'role']
 
-
     class AdmExerciseView(ModelView):
         can_edit = True
         can_create = True
@@ -95,7 +94,6 @@ def create_app(config_class=Config):
 
         form_columns = ['exercise_name', 'ip', 'description', 'note']
 
-
     class AdmWODView(ModelView):
         can_edit = True
         can_create = True
@@ -103,7 +101,6 @@ def create_app(config_class=Config):
         can_view_details = True
 
         form_columns = ['wod_name', 'warm_up', 'workout', 'description']
-
 
     class AdmCommentView(ModelView):
         can_edit = True

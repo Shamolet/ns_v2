@@ -55,6 +55,7 @@ def edit_profile():
 def wods_list():
     return render_template('main/wods_list.html', title='Список тренировок')
 
+
 @main.route('/wods/<wod>')
 def wod_name(wod):
     return render_template('main/wod.html', wod=wod, title='Тренировка дня')
