@@ -15,10 +15,10 @@
 <br>
     {% for wod in wods %}
     <div class="alert alert-info">
-        <h3>{{ wod.wod_name }}</h3>
+        <h3>{{ wod.wod_name | safe }}</h3>
         <br>
         <h4>Разминка</h4>
-        {{ wod.warm_up }}
+        {{ wod.warm_up | safe }}
         <br>
         <h4>Комплекс...</h4>
         <br>

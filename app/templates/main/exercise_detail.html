@@ -7,13 +7,13 @@
 
 <br>
 <h4>Исходное положение</h4>
-{{ detail.ip }}
+{{ detail.ip | safe }}
 <br>
 <h4>Описание</h4>
-{{ detail.description }}
+{{ detail.description | safe }}
 <br>
 <h4>Примечание</h4>
-{{ detail.note }}
+{{ detail.note | safe }}
 <br>
 <br>
         <a href="{{ url_for('main.exercises')}} ">

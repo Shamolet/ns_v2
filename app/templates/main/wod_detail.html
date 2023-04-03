@@ -7,13 +7,15 @@
 
     <br>
     <h4>Разминка</h4>
-    {{ detail.warm_up }}
+    {{ detail.warm_up | safe }}
+    <br>
     <br>
     <h4>Комплекс</h4>
-    {{ detail.workout }}
+    {{ detail.workout | safe }}
+    <br>
     <br>
     <h4>Примечание</h4>
-    {{ detail.description }}
+    {{ detail.description | safe }}
 
 <br>
 </div>
