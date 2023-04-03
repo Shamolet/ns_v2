@@ -6,19 +6,23 @@
 <br>
 Прикрутить поиск по модальностям
 <br>
+Добавить 4 модальность подвижность(mobility)
+<br>
+КРЧ, все что связано с МФР и растяжкой
 <br>
 <li>Упражнение в списке кликабельно</li>
-<li>Список упражнений в алфовитном порядке</li>
+<li>Список упражнений в алфавитном порядке</li>
 <br>
     {% for exercise in exercises_list %}
+    <div class="alert alert-info">
         <a href="{{ url_for('main.exercise_detail',
         id=exercise.id) }} ">
             {{ exercise.exercise_name }}</a>
+    </div>
 <br>
 
 
     {% endfor %}
 <br>
-
 
 {% endblock %}

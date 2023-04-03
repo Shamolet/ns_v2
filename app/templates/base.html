@@ -18,9 +18,11 @@
             </div>
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
                 <ul class="nav navbar-nav">
-                    <li><a href="{{ url_for('main.index') }}">Домашняя</a></li>
-                    <li><a href="{{ url_for('main.wods_list') }}">Тренировки</a></li>
+
+                    <li><a href="{{ url_for('main.wods') }}">Тренировки</a></li>
                     <li><a href="{{ url_for('main.exercises') }}">Упражнения</a></li>
+                    <li><a href="#">Физ-ра_101</a></li>
+                    <li><a href="#">F.A.Q.</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
                     {% if current_user.is_anonymous %}

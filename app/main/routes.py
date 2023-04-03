@@ -5,7 +5,7 @@ from flask_login import current_user, login_required
 from app import db
 from app.forms.forms import EditProfileForm
 from app.main import main
-from app.models.models import User, Exercise
+from app.models.models import User, Exercise, WOD
 
 
 @main.before_app_request
@@ -19,7 +19,9 @@ def before_request():
 @main.route('/index', methods=['GET', 'POST'])
 def index():
     user = {'username': 'KIM'}
-    return render_template('index.html', title='Домашняя', user=user)
+    wods = WOD.query.order_by(WOD.date_posted.desc()).all()
+    return render_template('index.html',
+                           user=user, wods=wods, title='Домашняя')
 
 
 # Block Users
@@ -52,13 +54,16 @@ def edit_profile():
 
 # Block WODs lib
 @main.route('/wods')
-def wods_list():
-    return render_template('main/wods_list.html', title='Список тренировок')
+def wods():
+    wods_list = WOD.query.order_by(WOD.date_posted.desc()).all()
+    return render_template('main/wods_list.html',
+                           wods_list=wods_list, title='Список тренировок')
 
 
-@main.route('/wods/<wod>')
-def wod_name(wod):
-    return render_template('main/wod.html', wod=wod, title='Тренировка дня')
+@main.route('/wods/<int:id>')
+def wod_detail(id):
+    detail = WOD.query.get(id)
+    return render_template('main/wod_detail.html', detail=detail)
 
 
 # Block Exercises Lib

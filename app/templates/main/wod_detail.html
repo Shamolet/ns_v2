@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block app_content %}
+<h2>Форма представления Тренировки дня</h2>
+<div class="alert alert-$red200">
+    <h3>{{ detail.date_posted.date() }}</h3>
+
+    <br>
+    <h4>Разминка</h4>
+    {{ detail.warm_up }}
+    <br>
+    <h4>Комплекс</h4>
+    {{ detail.workout }}
+    <br>
+    <h4>Примечание</h4>
+    {{ detail.description }}
+
+<br>
+</div>
+<br>
+<br>
+        <a href="{{ url_for('main.wods')}} ">
+            К списку тренировок</a>
+<br>
+
+{% endblock %}

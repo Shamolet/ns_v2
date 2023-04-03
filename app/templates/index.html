@@ -2,20 +2,34 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-    <h1>Привет, кАтлет! {{ current_user.username }}</h1>
 
-<H2>Как вижу форму представления трениовк на главной</H2>
+<h1>Привет, кАтлет! {{ current_user.username }}</h1>
 
-Скорей всего это 3 тренировки.
+    <H2>Главная</H2>
+
+Список из 3-х последних тренировок
 <br>Возможно, одна большая( "ПОСЛДЕНЯЯ" из опубликованных)
 и снизу 2 маленьких( "СЛЕДУЮЩИЕ" из опубликованных)
 <br>
-<h3>Описание в тренировках:</h3>
+
 <br>
-дата публикации
-фото/ гифка / видео стоп кадр? (что легче реализовать?)
-подробнее (ссылка)
+    {% for wod in wods %}
+    <div class="alert alert-info">
+        <h3>{{ wod.wod_name }}</h3>
+        <br>
+        <h4>Разминка</h4>
+        {{ wod.warm_up }}
+        <br>
+        <h4>Комплекс...</h4>
+        <br>
+        <button class="btn-warning">
+        <a href="{{ url_for('main.wod_detail',
+        id=wod.id) }} ">подробнее</a></button>
+    </div>
 
 
+    {% endfor %}
+<br>
 
 {% endblock %}
+
