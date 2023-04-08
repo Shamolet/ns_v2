@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from flask import render_template, redirect, url_for, flash, request
+from flask_admin import BaseView, expose
 from flask_login import logout_user, current_user, login_user
 from werkzeug.urls import url_parse
 from app import db
@@ -58,6 +59,7 @@ def register():
                            form=form)
 
 
+# Reset/Recovery Password
 @auth.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
     if current_user.is_authenticated:

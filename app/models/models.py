@@ -1,5 +1,6 @@
 from datetime import datetime
 from flask import current_app
+from flask_security import RoleMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db, login
@@ -7,6 +8,23 @@ import jwt
 from time import time
 
 from app import constants
+
+
+roles_users = db.Table(
+    'roles_users',
+    db.Column('user_id', db.Integer(), db.ForeignKey('users.id')),
+    db.Column('role_id', db.Integer(), db.ForeignKey('roles.id'))
+)
+
+
+class Role(db.Model, RoleMixin):
+    __tablename__ = 'roles'
+    id = db.Column(db.Integer(), primary_key=True)
+    name = db.Column(db.SmallInteger, default=constants.USER)  # look at constants.py
+    description = db.Column(db.String(255))
+
+    def __str__(self):
+        return self.name
 
 
 # Define the User data model.
@@ -26,17 +44,43 @@ class User(db.Model, UserMixin):
     # User information
     registry = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
-    role = db.Column(db.SmallInteger, default=constants.USER)  # look at constants.py
 
     # Relationships
-    # comments = db.relationship('Comment', backref='author', lazy='dynamic')
+    roles = db.relationship('Role', secondary=roles_users,
+                            backref=db.backref('users', lazy='dynamic'))
+    user_comments = db.relationship('Comment', backref='author_comment', lazy='dynamic')
+    user_wods = db.relationship('WOD', backref='done', lazy='dynamic')
+
     # results = db.relationship('Result', backref='author', lazy='dynamic')
-    # wods = db.relationship('WOD', backref='author', lazy='dynamic')
     # exercises = db.relationship('Exercise', backref='author', lazy='dynamic')
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
 
+    # Flask - Login
+    @property
+    def is_authenticated(self):
+        return True
+
+    @property
+    def is_active(self):
+        return True
+
+    @property
+    def is_anonymous(self):
+        return False
+
+    # Flask-Security
+    def __unicode__(self):
+        return self.username
+
+    def has_role(self, *args):
+        return set(args).issubset({role.name for role in self.roles})
+
+    def get_id(self):
+        return self.id
+
+    # Required for administrative interface
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 
@@ -58,10 +102,10 @@ class User(db.Model, UserMixin):
         return User.query.get(id)
 
 
-# Flask-Login profile loader function
+# Flask-Login profile loader function @login_required
 @login.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+def load_user(user_id):
+    return db.session.query(User).get(user_id)
 
 
 # Define the Comment data model.
@@ -72,7 +116,8 @@ class Comment(db.Model):
     body = db.Column(db.String(280))
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
-    # user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    wod_id = db.Column(db.Integer, db.ForeignKey('wods.id'), nullable=False)
 
     def __repr__(self):
         return '<Comment {}>'.format(self.body)
@@ -91,7 +136,7 @@ class Exercise(db.Model):
     # modality (0) metabolic (1) gymnastic (2) external object
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     # user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    # wod_id = db.Column(db.Integer, db.ForeignKey("wods.id"))
+    # wod_id = db.Column(db.Integer, db.ForeignKey("wods.id"), nullable=False)
 
 
 # Define the WOD data model.
@@ -105,9 +150,10 @@ class WOD(db.Model):
     description = db.Column(db.Text(200), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User(Many), Comment() Exercise
-    # user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-    # comment_id = db.Column(db.Integer, db.ForeignKey("comments.id"), nullable=True)
-    # exercises = db.relationship("exercises.id", backref='author', lazy=True)
+    wod_comments = db.relationship("Comment", backref='posts', lazy=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+    # exercises = db.relationship("Exercise", backref='author', lazy=True)
 
 
 # Define the Results data model.
@@ -119,5 +165,5 @@ class Result(db.Model):
     result = db.Column(db.String(200), unique=False, nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User, Exercise
-    # user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
+    # user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
     # exercises = db.relationship("exercises.id", backref='author', lazy=True)

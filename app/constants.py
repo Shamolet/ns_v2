@@ -2,7 +2,7 @@
 ADMIN = 0
 STAFF = 1
 USER = 2
-ROLE = {
+ROLES = {
     ADMIN: 'admin',
     STAFF: 'staff',
     USER: 'пользователь',
@@ -30,8 +30,10 @@ SEX = {
 METABOLIC = 0
 GYMNASTIC = 1
 EXTERNAL_OBJECT = 2
+MOBILITY = 3
 MODALITY = {
     METABOLIC: 'метаболика',
     GYMNASTIC: 'гимнастика',
     EXTERNAL_OBJECT: 'внешние объекты',
+    MOBILITY: 'подвижность'
 }

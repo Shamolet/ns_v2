@@ -1,11 +1,10 @@
 from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request
-from flask_admin import BaseView, expose
 from flask_login import current_user, login_required
 from app import db
-from app.forms.forms import EditProfileForm
+from app.forms.forms import EditProfileForm, CommentForm
 from app.main import main
-from app.models.models import User, Exercise, WOD
+from app.models.models import User, Exercise, WOD, Comment
 
 
 @main.before_app_request
@@ -19,7 +18,7 @@ def before_request():
 @main.route('/index', methods=['GET', 'POST'])
 def index():
     user = {'username': 'KIM'}
-    wods = WOD.query.order_by(WOD.date_posted.desc()).all()
+    wods = WOD.query.order_by(WOD.date_posted.desc()).limit(3)
     return render_template('index.html',
                            user=user, wods=wods, title='Домашняя')
 
@@ -60,10 +59,18 @@ def wods():
                            wods_list=wods_list, title='Список тренировок')
 
 
-@main.route('/wods/<int:id>')
+@main.route('/wods/<int:id>', methods=['GET', 'POST'])
 def wod_detail(id):
     detail = WOD.query.get(id)
-    return render_template('main/wod_detail.html', detail=detail)
+    form = CommentForm()
+    if form.validate_on_submit():
+        comment = Comment(body=form.comment.data, author=current_user)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Коммент опубликован!')
+        return redirect(url_for('main.wod_detail'))
+
+    return render_template('main/wod_detail.html', detail=detail, form=form)
 
 
 # Block Exercises Lib
@@ -79,9 +86,3 @@ def exercise_detail(id):
     detail = Exercise.query.get(id)
     return render_template('main/exercise_detail.html',
                            detail=detail)
-
-
-class AnyPageView(BaseView):
-    @expose('/')
-    def any_page(self):
-        return render_template('main/admin.html')

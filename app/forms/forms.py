@@ -22,7 +22,7 @@ class EmptyForm(FlaskForm):
 
 
 class CommentForm(FlaskForm):
-    comment = TextAreaField('Черкни что-нибудь', validators=[DataRequired()])
+    comment = TextAreaField('Черкнуть что-нибудь о тренировке', validators=[DataRequired()])
     submit = SubmitField('Тык')
 
 

@@ -1,7 +1,13 @@
 {% extends "base.html" %}
+{% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
 <h2>Форма представления Тренировки дня</h2>
+
+<br>
+        <a href="{{ url_for('main.wods')}} ">
+            К списку тренировок</a>
+<br>
 <div class="alert alert-$red200">
     <h3>{{ detail.date_posted.date() }}</h3>
 
@@ -20,9 +26,7 @@
 <br>
 </div>
 <br>
-<br>
-        <a href="{{ url_for('main.wods')}} ">
-            К списку тренировок</a>
-<br>
+{{ wtf.quick_form(form) }}
+
 
 {% endblock %}
