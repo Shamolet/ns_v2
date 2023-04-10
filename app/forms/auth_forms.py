@@ -11,6 +11,11 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Тык')
 
 
+class AdminLoginForm(FlaskForm):
+    username = StringField('Никнейм', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+
+
 class RegistrationForm(FlaskForm):
     username = StringField('Никнейм', validators=[DataRequired()])
     email = StringField('Почта', validators=[DataRequired(), Email()])

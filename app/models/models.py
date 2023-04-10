@@ -1,6 +1,5 @@
 from datetime import datetime
 from flask import current_app
-from flask_security import RoleMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_login import UserMixin
 from app import db, login
@@ -8,23 +7,6 @@ import jwt
 from time import time
 
 from app import constants
-
-
-roles_users = db.Table(
-    'roles_users',
-    db.Column('user_id', db.Integer(), db.ForeignKey('users.id')),
-    db.Column('role_id', db.Integer(), db.ForeignKey('roles.id'))
-)
-
-
-class Role(db.Model, RoleMixin):
-    __tablename__ = 'roles'
-    id = db.Column(db.Integer(), primary_key=True)
-    name = db.Column(db.SmallInteger, default=constants.USER)  # look at constants.py
-    description = db.Column(db.String(255))
-
-    def __str__(self):
-        return self.name
 
 
 # Define the User data model.
@@ -45,14 +27,18 @@ class User(db.Model, UserMixin):
     registry = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
     last_seen = db.Column(db.DateTime, default=datetime.utcnow)
 
+    # Admin
+    admin = db.Column(db.Boolean())
+
     # Relationships
-    roles = db.relationship('Role', secondary=roles_users,
-                            backref=db.backref('users', lazy='dynamic'))
     user_comments = db.relationship('Comment', backref='author_comment', lazy='dynamic')
     user_wods = db.relationship('WOD', backref='done', lazy='dynamic')
 
     # results = db.relationship('Result', backref='author', lazy='dynamic')
     # exercises = db.relationship('Exercise', backref='author', lazy='dynamic')
+
+    def is_admin(self):
+        return self.admin
 
     def __repr__(self):
         return '<User {}>'.format(self.username)
@@ -69,16 +55,6 @@ class User(db.Model, UserMixin):
     @property
     def is_anonymous(self):
         return False
-
-    # Flask-Security
-    def __unicode__(self):
-        return self.username
-
-    def has_role(self, *args):
-        return set(args).issubset({role.name for role in self.roles})
-
-    def get_id(self):
-        return self.id
 
     # Required for administrative interface
     def set_password(self, password):

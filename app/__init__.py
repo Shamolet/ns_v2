@@ -80,59 +80,60 @@ def create_app(config_class=Config):
 
     app.jinja_env.globals['bootstrap_is_hidden_field'] = is_hidden_field_filter
 
-    # # Indivirual Admin part
-    # class AdminUserView(ModelView):
-    #     can_edit = True
-    #     can_create = True
-    #     can_delete = True
-    #     can_view_details = True
+    class AdminUserView(ModelView):
+        can_edit = True
+        can_create = True
+        can_delete = True
+        can_view_details = True
+        column_exclude_list = ['password_hash']
+        form_excluded_columns = ['password_hash']
+
+        form_columns = ['username', 'sex', 'admin']
+
+    class AdminExerciseView(ModelView):
+        can_edit = True
+        can_create = True
+        can_delete = True
+        can_view_details = True
+
+        form_columns = ['exercise_name', 'ip', 'description', 'note']
+
+    class AdminWODView(ModelView):
+        can_edit = True
+        can_create = True
+        can_delete = True
+        can_view_details = True
+
+        form_columns = ['wod_name', 'warm_up', 'workout', 'description']
+
+    class AdminCommentView(ModelView):
+        can_edit = True
+        can_create = True
+        can_delete = True
+        can_view_details = True
+
+        form_columns = ['body']
+
+    class AdminResultView(ModelView):
+        can_edit = True
+        can_create = True
+        can_delete = True
+        can_view_details = True
+
+        form_columns = ['result']
+
+    # # Admin model views
+    admin = Admin(app, name='Админка', template_mode='bootstrap3')
     #
-    #     form_columns = ['username']
-    #
-    # class AdmExerciseView(ModelView):
-    #     can_edit = True
-    #     can_create = True
-    #     can_delete = True
-    #     can_view_details = True
-    #
-    #     form_columns = ['exercise_name', 'ip', 'description', 'note']
-    #
-    # class AdmWODView(ModelView):
-    #     can_edit = True
-    #     can_create = True
-    #     can_delete = True
-    #     can_view_details = True
-    #
-    #     form_columns = ['wod_name', 'warm_up', 'workout', 'description']
-    #
-    # class AdmCommentView(ModelView):
-    #     can_edit = True
-    #     can_create = True
-    #     can_delete = True
-    #     can_view_details = True
-    #
-    #     form_columns = ['body']
-    #
-    # class AdmResultView(ModelView):
-    #     can_edit = True
-    #     can_create = True
-    #     can_delete = True
-    #     can_view_details = True
-    #
-    #     form_columns = ['result']
-    #
-    # # # Admin model views
-    # admin = Admin(app, name='Админка', template_mode='bootstrap3')
-    # #
-    # # # Main model views
-    # from app.models.models import User, Comment, Exercise, WOD, Result
-    # admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
-    # admin.add_view(AdmWODView(WOD, db.session, name='Тренировки'))
-    # admin.add_view(AdmExerciseView(Exercise, db.session, name='Упражнения'))
-    # admin.add_view(AdmCommentView(Comment, db.session, name='Комментарии'))
-    # admin.add_view(AdmResultView(Result, db.session, name='Результаты'))
-    #
-    # admin.add_link(MenuLink(name='Выход', endpoint='admin.index'))
+    # # Main model views
+    from app.models.models import User, Comment, Exercise, WOD, Result
+    admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
+    admin.add_view(AdminWODView(WOD, db.session, name='Тренировки'))
+    admin.add_view(AdminExerciseView(Exercise, db.session, name='Упражнения'))
+    admin.add_view(AdminCommentView(Comment, db.session, name='Комментарии'))
+    admin.add_view(AdminResultView(Result, db.session, name='Результаты'))
+
+    admin.add_link(MenuLink(name='Выход', endpoint='admin.index'))
 
     # Test and Debug
     if not app.debug and not app.testing:
