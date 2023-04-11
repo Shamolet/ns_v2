@@ -133,7 +133,7 @@ def create_app(config_class=Config):
     admin.add_view(AdminCommentView(Comment, db.session, name='Комментарии'))
     admin.add_view(AdminResultView(Result, db.session, name='Результаты'))
 
-    admin.add_link(MenuLink(name='Выход', endpoint='admin.index'))
+    admin.add_link(MenuLink(name='Выход', endpoint='main.index'))
 
     # Test and Debug
     if not app.debug and not app.testing:

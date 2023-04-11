@@ -26,7 +26,13 @@
 <br>
 </div>
 <br>
-{{ wtf.quick_form(form) }}
+    {% if form %}
+    {{ wtf.quick_form(form) }}
+    <br>
+    {% endif %}
+    {% for comment in comments %}
+        {% include '_comment.html' %}
+    {% endfor %}
 
 
 {% endblock %}

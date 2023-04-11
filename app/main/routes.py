@@ -60,17 +60,19 @@ def wods():
 
 
 @main.route('/wods/<int:id>', methods=['GET', 'POST'])
+@login_required
 def wod_detail(id):
     detail = WOD.query.get(id)
     form = CommentForm()
     if form.validate_on_submit():
-        comment = Comment(body=form.comment.data, author=current_user)
+        comment = Comment(body=form.comment.data, author_comment=current_user)
         db.session.add(comment)
         db.session.commit()
         flash('Коммент опубликован!')
         return redirect(url_for('main.wod_detail'))
-
-    return render_template('main/wod_detail.html', detail=detail, form=form)
+    comments = WOD().wod_comments()
+    return render_template('main/wod_detail.html', comments=comments.items,
+                           detail=detail, form=form)
 
 
 # Block Exercises Lib

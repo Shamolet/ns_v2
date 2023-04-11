@@ -13,7 +13,7 @@ from app import constants
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     # User authentication information
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.Unicode(255), nullable=False,
@@ -93,10 +93,32 @@ class Comment(db.Model):
     timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-    wod_id = db.Column(db.Integer, db.ForeignKey('wods.id'), nullable=False)
+    wod_id = db.Column(db.Integer, db.ForeignKey('wods.id'))
 
     def __repr__(self):
         return '<Comment {}>'.format(self.body)
+
+
+# Define the WOD data model.
+class WOD(db.Model):
+    __tablename__ = "wods"
+
+    id = db.Column(db.Integer, primary_key=True)
+    wod_name = db.Column(db.String(100), unique=False, nullable=False, default=None)
+    warm_up = db.Column(db.Text(200), nullable=False)
+    workout = db.Column(db.Text(200), nullable=False)
+    description = db.Column(db.Text(200), nullable=False)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    # Relationship User(Many), Comment() Exercise
+    wod_id = db.Column(db.Integer, db.ForeignKey("wods.id"))
+    # wod_comments = db.relationship("Comment", backref='posts', lazy=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+    # exercises = db.relationship("Exercise", backref='author', lazy=True)
+
+    def wod_comments(self):
+        wod_comments = Comment.query.filter(self.id)
+        return wod_comments.order_by(Comment.timestamp.desc())
 
 
 # Define the Exercise data model.
@@ -115,21 +137,6 @@ class Exercise(db.Model):
     # wod_id = db.Column(db.Integer, db.ForeignKey("wods.id"), nullable=False)
 
 
-# Define the WOD data model.
-class WOD(db.Model):
-    __tablename__ = "wods"
-
-    id = db.Column(db.Integer, primary_key=True)
-    wod_name = db.Column(db.String(100), unique=False, nullable=False, default=None)
-    warm_up = db.Column(db.Text(200), nullable=False)
-    workout = db.Column(db.Text(200), nullable=False)
-    description = db.Column(db.Text(200), nullable=False)
-    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    # Relationship User(Many), Comment() Exercise
-    wod_comments = db.relationship("Comment", backref='posts', lazy=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-
-    # exercises = db.relationship("Exercise", backref='author', lazy=True)
 
 
 # Define the Results data model.
