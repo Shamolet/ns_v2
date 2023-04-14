@@ -65,13 +65,14 @@ def wod_detail(id):
     detail = WOD.query.get(id)
     form = CommentForm()
     if form.validate_on_submit():
-        comment = Comment(body=form.comment.data, author_comment=current_user)
+        comment = Comment(body=form.comment.data,
+                          author_comment=current_user, wod_comment=detail)
         db.session.add(comment)
         db.session.commit()
         flash('Коммент опубликован!')
-        return redirect(url_for('main.wod_detail'))
-    comments = WOD().wod_comments()
-    return render_template('main/wod_detail.html', comments=comments.items,
+        return redirect(url_for('main.wod_detail', id=id))
+    comments = Comment.query.filter_by(wod_id=id).order_by(Comment.timestamp.desc()).all()
+    return render_template('main/wod_detail.html', comments=comments,
                            detail=detail, form=form)
 
 

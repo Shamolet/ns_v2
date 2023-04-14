@@ -1,13 +1,13 @@
     <table class="table table-hover">
         <tr>
             <td width="70px">
-                <a href="{{ url_for('main.user',
+                <a href="{{ url_for('main.profile',
                 username=comment.author_comment.username) }}">
 
                 </a>
             </td>
             <td>
-                <a href="{{ url_for('main.user',
+                <a href="{{ url_for('main.profile',
                 username=comment.author_comment.username) }}">
                     {{ comment.author_comment.username}}
                 </a>

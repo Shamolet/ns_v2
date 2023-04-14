@@ -32,10 +32,7 @@ class User(db.Model, UserMixin):
 
     # Relationships
     user_comments = db.relationship('Comment', backref='author_comment', lazy='dynamic')
-    user_wods = db.relationship('WOD', backref='done', lazy='dynamic')
 
-    # results = db.relationship('Result', backref='author', lazy='dynamic')
-    # exercises = db.relationship('Exercise', backref='author', lazy='dynamic')
 
     def is_admin(self):
         return self.admin
@@ -110,15 +107,7 @@ class WOD(db.Model):
     description = db.Column(db.Text(200), nullable=False)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User(Many), Comment() Exercise
-    wod_id = db.Column(db.Integer, db.ForeignKey("wods.id"))
-    # wod_comments = db.relationship("Comment", backref='posts', lazy=True)
-    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
-
-    # exercises = db.relationship("Exercise", backref='author', lazy=True)
-
-    def wod_comments(self):
-        wod_comments = Comment.query.filter(self.id)
-        return wod_comments.order_by(Comment.timestamp.desc())
+    wod_comments = db.relationship("Comment", backref='wod_comment', lazy=True)
 
 
 # Define the Exercise data model.
