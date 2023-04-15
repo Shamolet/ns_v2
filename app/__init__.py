@@ -96,7 +96,7 @@ def create_app(config_class=Config):
         can_delete = True
         can_view_details = True
 
-        form_columns = ['exercise_name', 'ip', 'description', 'note']
+        form_columns = ['exercise_name', 'ip', 'description', 'note', 'modality']
 
     class AdminWODView(ModelView):
         can_edit = True

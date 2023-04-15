@@ -24,10 +24,15 @@
     {{ detail.description | safe }}
 
 <br>
+    {{ wtf.quick_form(result_form) }}
+    <br>
+    <p> Твой последний результат в этом комплексе : {{ results.result }}</p>
+    <br>
+
 </div>
 <br>
-    {% if form %}
-    {{ wtf.quick_form(form) }}
+    {% if comment_form %}
+    {{ wtf.quick_form(comment_form) }}
     <br>
     {% endif %}
     {% for comment in comments %}

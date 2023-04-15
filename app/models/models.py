@@ -31,8 +31,10 @@ class User(db.Model, UserMixin):
     admin = db.Column(db.Boolean())
 
     # Relationships
-    user_comments = db.relationship('Comment', backref='author_comment', lazy='dynamic')
-
+    user_comments = db.relationship('Comment',
+                                    backref='author_comment', lazy='dynamic')
+    user_results = db.relationship('Result',
+                                    backref='author_result', lazy='dynamic')
 
     def is_admin(self):
         return self.admin
@@ -108,6 +110,7 @@ class WOD(db.Model):
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User(Many), Comment() Exercise
     wod_comments = db.relationship("Comment", backref='wod_comment', lazy=True)
+    wod_results = db.relationship("Result", backref='wod_result', lazy=True)
 
 
 # Define the Exercise data model.
@@ -126,16 +129,17 @@ class Exercise(db.Model):
     # wod_id = db.Column(db.Integer, db.ForeignKey("wods.id"), nullable=False)
 
 
-
-
 # Define the Results data model.
 class Result(db.Model):
     __tablename__ = "results"
 
     id = db.Column(db.Integer, primary_key=True)
     # think about post results: load, time, reps
-    result = db.Column(db.String(200), unique=False, nullable=False)
+    result = db.Column(db.String(200))
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User, Exercise
-    # user_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=False)
-    # exercises = db.relationship("exercises.id", backref='author', lazy=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    wod_id = db.Column(db.Integer, db.ForeignKey("wods.id"))
+
+    def __repr__(self):
+        return '<Result {}>'.format(self.result)

@@ -2,9 +2,9 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_required
 from app import db
-from app.forms.forms import EditProfileForm, CommentForm
+from app.forms.forms import EditProfileForm, CommentForm, ResultForm
 from app.main import main
-from app.models.models import User, Exercise, WOD, Comment
+from app.models.models import User, Exercise, WOD, Comment, Result
 
 
 @main.before_app_request
@@ -63,17 +63,32 @@ def wods():
 @login_required
 def wod_detail(id):
     detail = WOD.query.get(id)
-    form = CommentForm()
-    if form.validate_on_submit():
-        comment = Comment(body=form.comment.data,
+
+    result_form = ResultForm()
+    if result_form.validate_on_submit():
+        result = Result(result=result_form.result.data,
+                          author_result=current_user, wod_result=detail)
+        db.session.add(result)
+        db.session.commit()
+        flash('Поздравляем с выполнением комплекса!')
+        return redirect(url_for('main.wod_detail', id=id))
+    results = Result.query.filter_by(wod_id=id).\
+        filter_by(author_result=current_user).\
+        order_by(Result.date_posted.desc()).first()
+
+    comment_form = CommentForm()
+    if comment_form.validate_on_submit():
+        comment = Comment(body=comment_form.comment.data,
                           author_comment=current_user, wod_comment=detail)
         db.session.add(comment)
         db.session.commit()
         flash('Коммент опубликован!')
         return redirect(url_for('main.wod_detail', id=id))
-    comments = Comment.query.filter_by(wod_id=id).order_by(Comment.timestamp.desc()).all()
+    comments = Comment.query.filter_by(wod_id=id).\
+        order_by(Comment.timestamp.desc()).all()
     return render_template('main/wod_detail.html', comments=comments,
-                           detail=detail, form=form)
+                           detail=detail, comment_form=comment_form,
+                           result_form=result_form, results=results)
 
 
 # Block Exercises Lib

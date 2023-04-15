@@ -15,6 +15,7 @@ def before_request():
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
 
+
 class MyAdmin(BaseView):
     @expose('/')
     def admin(self):
@@ -42,4 +43,3 @@ class MyAdmin(BaseView):
     def admin_logout(self):
         logout_user()
         return redirect(url_for('auth.login'))
-
