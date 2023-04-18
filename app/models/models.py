@@ -33,7 +33,7 @@ class User(db.Model, UserMixin):
     # Relationships
     user_comments = db.relationship('Comment',
                                     backref='author_comment', lazy='dynamic')
-    user_results = db.relationship('Result',
+    user_results = db.relationship('Result_rep',
                                     backref='author_result', lazy='dynamic')
 
     def is_admin(self):
@@ -103,14 +103,15 @@ class WOD(db.Model):
     __tablename__ = "wods"
 
     id = db.Column(db.Integer, primary_key=True)
-    wod_name = db.Column(db.String(100), unique=False, nullable=False, default=None)
+    wod_name = db.Column(db.String(100), unique=False, nullable=False, default=datetime.now)
     warm_up = db.Column(db.Text(200), nullable=False)
     workout = db.Column(db.Text(200), nullable=False)
     description = db.Column(db.Text(200), nullable=False)
+    confirm = db.Column(db.Integer, default=constants.BOOL)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User(Many), Comment() Exercise
     wod_comments = db.relationship("Comment", backref='wod_comment', lazy=True)
-    wod_results = db.relationship("Result", backref='wod_result', lazy=True)
+    wod_results = db.relationship("Result_rep", backref='wod_result', lazy=True)
 
 
 # Define the Exercise data model.
@@ -130,12 +131,12 @@ class Exercise(db.Model):
 
 
 # Define the Results data model.
-class Result(db.Model):
-    __tablename__ = "results"
+class Result_rep(db.Model):
+    __tablename__ = "results_reps"
 
     id = db.Column(db.Integer, primary_key=True)
     # think about post results: load, time, reps
-    result = db.Column(db.String(200))
+    result = db.Column(db.Integer)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User, Exercise
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
@@ -143,3 +144,19 @@ class Result(db.Model):
 
     def __repr__(self):
         return '<Result {}>'.format(self.result)
+
+
+class Result_time(db.Model):
+    __tablename__ = "results_times"
+
+    id = db.Column(db.Integer, primary_key=True)
+    # think about post results: load, time, reps
+    minutes = db.Column(db.Integer)
+    seconds = db.Column(db.Integer)
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    # Relationship User, Exercise
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    wod_id = db.Column(db.Integer, db.ForeignKey("wods.id"))
+
+    def __repr__(self):
+        return '<Result {}>'.format(self.minutes.seconds)

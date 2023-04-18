@@ -2,11 +2,13 @@
 {% import 'bootstrap/wtf.html' as wtf %}
 
 {% block app_content %}
-<h2>Форма представления Тренировки дня</h2>
+
 
 <br>
         <a href="{{ url_for('main.wods')}} ">
             К списку тренировок</a>
+<br>
+<a href="#">Статистика комплекса</a>
 <br>
 <div class="alert alert-$red200">
     <h3>{{ detail.date_posted.date() }}</h3>
@@ -23,8 +25,11 @@
     <h4>Примечание</h4>
     {{ detail.description | safe }}
 
+    <br>
+    <br>
+    {{ wtf.quick_form(result_time_form) }}
 <br>
-    {{ wtf.quick_form(result_form) }}
+    {{ wtf.quick_form(result_rep_form) }}
     <br>
     <p> Твой последний результат в этом комплексе : {{ results.result }}</p>
     <br>

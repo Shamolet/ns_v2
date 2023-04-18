@@ -24,8 +24,3 @@ class EmptyForm(FlaskForm):
 class CommentForm(FlaskForm):
     comment = TextAreaField('Черкнуть что-нибудь о тренировке', validators=[DataRequired()])
     submit = SubmitField('Тык')
-
-
-class ResultForm(FlaskForm):
-    result = StringField('Результат', validators=[DataRequired()])
-    submit = SubmitField('Подтвердить')

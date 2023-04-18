@@ -16,7 +16,7 @@
         <div class="alert alert-info">
         <a href="{{ url_for('main.wod_detail',
         id=wod.id) }} ">
-            {{ wod.wod_name }}</a>
+            {{ wod.date_posted.date() }}</a>
         </div>
 <br>
 

@@ -37,3 +37,15 @@ MODALITY = {
     EXTERNAL_OBJECT: 'внешние объекты',
     MOBILITY: 'подвижность'
 }
+
+# wod confirm
+BOOL = 0
+REPS = 1
+TIME = 2
+TIEBRAEK = 3
+WODCONFIRM = {
+    BOOL: 'выполнено',
+    REPS: 'повторения',
+    TIME: 'время',
+    TIEBRAEK: 'смешанно'
+}

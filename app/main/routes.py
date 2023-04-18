@@ -2,9 +2,10 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_required
 from app import db
-from app.forms.forms import EditProfileForm, CommentForm, ResultForm
+from app.forms.forms import EditProfileForm, CommentForm
+from app.forms.result_forms import ResultRepsForm, ResultTimeForm
 from app.main import main
-from app.models.models import User, Exercise, WOD, Comment, Result
+from app.models.models import User, Exercise, WOD, Comment, Result_rep
 
 
 @main.before_app_request
@@ -64,17 +65,19 @@ def wods():
 def wod_detail(id):
     detail = WOD.query.get(id)
 
-    result_form = ResultForm()
-    if result_form.validate_on_submit():
-        result = Result(result=result_form.result.data,
-                          author_result=current_user, wod_result=detail)
+    result_time_form = ResultTimeForm()
+
+    result_rep_form = ResultRepsForm()
+    if result_rep_form.validate_on_submit():
+        result = Result_rep(result=result_rep_form.result.data,
+                            author_result=current_user, wod_result=detail)
         db.session.add(result)
         db.session.commit()
         flash('Поздравляем с выполнением комплекса!')
         return redirect(url_for('main.wod_detail', id=id))
-    results = Result.query.filter_by(wod_id=id).\
+    results = Result_rep.query.filter_by(wod_id=id).\
         filter_by(author_result=current_user).\
-        order_by(Result.date_posted.desc()).first()
+        order_by(Result_rep.date_posted.desc()).first()
 
     comment_form = CommentForm()
     if comment_form.validate_on_submit():
@@ -88,7 +91,8 @@ def wod_detail(id):
         order_by(Comment.timestamp.desc()).all()
     return render_template('main/wod_detail.html', comments=comments,
                            detail=detail, comment_form=comment_form,
-                           result_form=result_form, results=results)
+                           result_rep_form=result_rep_form, result_time_form=result_time_form,
+                           results=results)
 
 
 # Block Exercises Lib

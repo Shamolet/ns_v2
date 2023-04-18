@@ -15,7 +15,7 @@
 <br>
     {% for wod in wods %}
     <div class="alert alert-info">
-        <h3>{{ wod.wod_name | safe }}</h3>
+        <h3>{{ wod.date_posted.date() }}</h3>
         <br>
         <h4>Разминка</h4>
         {{ wod.warm_up | safe }}
