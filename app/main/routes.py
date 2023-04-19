@@ -2,10 +2,9 @@ from datetime import datetime
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import current_user, login_required
 from app import db
-from app.forms.forms import EditProfileForm, CommentForm
-from app.forms.result_forms import ResultRepsForm, ResultTimeForm
+from app.forms.forms import EditProfileForm
 from app.main import main
-from app.models.models import User, Exercise, WOD, Comment, Result_rep
+from app.models.models import User, Exercise, WOD
 
 
 @main.before_app_request
@@ -52,50 +51,7 @@ def edit_profile():
                            form=form)
 
 
-# Block WODs lib
-@main.route('/wods')
-def wods():
-    wods_list = WOD.query.order_by(WOD.date_posted.desc()).all()
-    return render_template('main/wods_list.html',
-                           wods_list=wods_list, title='Список тренировок')
-
-
-@main.route('/wods/<int:id>', methods=['GET', 'POST'])
-@login_required
-def wod_detail(id):
-    detail = WOD.query.get(id)
-
-    result_time_form = ResultTimeForm()
-
-    result_rep_form = ResultRepsForm()
-    if result_rep_form.validate_on_submit():
-        result = Result_rep(result=result_rep_form.result.data,
-                            author_result=current_user, wod_result=detail)
-        db.session.add(result)
-        db.session.commit()
-        flash('Поздравляем с выполнением комплекса!')
-        return redirect(url_for('main.wod_detail', id=id))
-    results = Result_rep.query.filter_by(wod_id=id).\
-        filter_by(author_result=current_user).\
-        order_by(Result_rep.date_posted.desc()).first()
-
-    comment_form = CommentForm()
-    if comment_form.validate_on_submit():
-        comment = Comment(body=comment_form.comment.data,
-                          author_comment=current_user, wod_comment=detail)
-        db.session.add(comment)
-        db.session.commit()
-        flash('Коммент опубликован!')
-        return redirect(url_for('main.wod_detail', id=id))
-    comments = Comment.query.filter_by(wod_id=id).\
-        order_by(Comment.timestamp.desc()).all()
-    return render_template('main/wod_detail.html', comments=comments,
-                           detail=detail, comment_form=comment_form,
-                           result_rep_form=result_rep_form, result_time_form=result_time_form,
-                           results=results)
-
-
-# Block Exercises Lib
+# Block Exercises
 @main.route('/exercises')
 def exercises():
     exercises_list = Exercise.query.order_by(Exercise.exercise_name.asc()).all()

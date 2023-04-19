@@ -107,11 +107,13 @@ class WOD(db.Model):
     warm_up = db.Column(db.Text(200), nullable=False)
     workout = db.Column(db.Text(200), nullable=False)
     description = db.Column(db.Text(200), nullable=False)
-    confirm = db.Column(db.Integer, default=constants.BOOL)
+    type_result = db.Column(db.Integer, default=constants.BOOL)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User(Many), Comment() Exercise
     wod_comments = db.relationship("Comment", backref='wod_comment', lazy=True)
-    wod_results = db.relationship("Result_rep", backref='wod_result', lazy=True)
+    wod_results_rep = db.relationship("Result_rep", backref='wod_result_rep', lazy=True)
+    wod_results_time = db.relationship("Result_time", backref='wod_result_time', lazy=True)
+    wod_results_bool = db.relationship("Result_bool", backref='wod_result_bool', lazy=True)
 
 
 # Define the Exercise data model.
@@ -160,3 +162,18 @@ class Result_time(db.Model):
 
     def __repr__(self):
         return '<Result {}>'.format(self.minutes.seconds)
+
+
+class Result_bool(db.Model):
+    __tablename__ = "results_booleans"
+
+    id = db.Column(db.Integer, primary_key=True)
+    # think about post results: load, time, reps
+    confirm = db.Column(db.Boolean())
+    date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
+    # Relationship User, Exercise
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    wod_id = db.Column(db.Integer, db.ForeignKey("wods.id"))
+
+    def __repr__(self):
+        return '<Result {}>'.format(self.confirm)

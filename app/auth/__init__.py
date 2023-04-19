@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-auth = Blueprint('auth', __name__)
+auth_bp = Blueprint('auth_bp', __name__)
 
 # flake8: noqa
 from app.auth import routes

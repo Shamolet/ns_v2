@@ -5,7 +5,7 @@
 
 
 <br>
-        <a href="{{ url_for('main.wods')}} ">
+        <a href="{{ url_for('wod_bp.wods')}} ">
             К списку тренировок</a>
 <br>
 <a href="#">Статистика комплекса</a>
@@ -26,6 +26,8 @@
     {{ detail.description | safe }}
 
     <br>
+    <br>
+    {{ wtf.quick_form(result_bool_form) }}
     <br>
     {{ wtf.quick_form(result_time_form) }}
 <br>

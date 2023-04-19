@@ -3,21 +3,21 @@ from flask import render_template, redirect, url_for, flash, request
 from flask_login import logout_user, current_user, login_user
 from werkzeug.urls import url_parse
 from app import db
-from app.auth import auth
+from app.auth import auth_bp
 from app.forms.auth_forms import LoginForm, RegistrationForm, \
     ResetPasswordRequestForm, ResetPasswordForm
 from app.models.models import User
 from app.auth.email import send_password_reset_email
 
 
-@auth.before_app_request
+@auth_bp.before_app_request
 def before_request():
     if current_user.is_authenticated:
         current_user.last_seen = datetime.utcnow()
         db.session.commit()
 
 
-@auth.route('/login', methods=['GET', 'POST'])
+@auth_bp.route('/login', methods=['GET', 'POST'])
 def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -26,7 +26,7 @@ def login():
         user = User.query.filter_by(username=form.username.data).first()
         if user is None or not user.check_password(form.password.data):
             flash("Неверная пара логин/пароль", "error")
-            return redirect(url_for('auth.login'))
+            return redirect(url_for('auth_bp.login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
         if not next_page or url_parse(next_page).netloc != '':
@@ -35,13 +35,13 @@ def login():
     return render_template('auth/login.html', title='Войти', form=form)
 
 
-@auth.route('/logout')
+@auth_bp.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('auth.login'))
+    return redirect(url_for('auth_bp.login'))
 
 
-@auth.route('/register', methods=['GET', 'POST'])
+@auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
         return redirect(url_for('main.edit_profile'))
@@ -58,7 +58,7 @@ def register():
 
 
 # Reset/Recovery Password
-@auth.route('/reset_password_request', methods=['GET', 'POST'])
+@auth_bp.route('/reset_password_request', methods=['GET', 'POST'])
 def reset_password_request():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -69,12 +69,12 @@ def reset_password_request():
             send_password_reset_email(user)
         flash(
             'Check your email for the instructions to reset your password')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth_bp.login'))
     return render_template('auth/reset_password_request.html',
                            title='Reset Password', form=form)
 
 
-@auth.route('/reset_password/<token>', methods=['GET', 'POST'])
+@auth_bp.route('/reset_password/<token>', methods=['GET', 'POST'])
 def reset_password(token):
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
@@ -86,5 +86,5 @@ def reset_password(token):
         user.set_password(form.password.data)
         db.session.commit()
         flash('Your password has been reset.')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth_bp.login'))
     return render_template('auth/reset_password.html', form=form)

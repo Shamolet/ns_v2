@@ -42,4 +42,4 @@ class MyAdmin(BaseView):
     @expose('/logout')
     def admin_logout(self):
         logout_user()
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('auth_bp.login'))

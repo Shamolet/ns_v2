@@ -62,9 +62,12 @@ def create_app(config_class=Config):
     # Main
     from app.main import main
     app.register_blueprint(main)
+    # WOD
+    from app.wod import wod_bp
+    app.register_blueprint(wod_bp)
     # Authentication
-    from app.auth import auth
-    app.register_blueprint(auth, url_prefix='/auth')
+    from app.auth import auth_bp
+    app.register_blueprint(auth_bp, url_prefix='/auth')
     # Admin
     from app.admin import admin_bp
     app.register_blueprint(admin_bp)
@@ -104,7 +107,7 @@ def create_app(config_class=Config):
         can_delete = True
         can_view_details = True
 
-        form_columns = ['wod_name', 'warm_up', 'workout', 'description', 'confirm']
+        form_columns = ['wod_name', 'warm_up', 'workout', 'description', 'type_result']
 
     class AdminCommentView(ModelView):
         can_edit = True
