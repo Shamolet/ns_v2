@@ -16,6 +16,6 @@ class ResultTimeForm(FlaskForm):
     submit = SubmitField('Подтвердить')
 
 
-class ResultBooleanForm(FlaskForm):
-    result = BooleanField('Результат, Done или Не Done?', validators=[DataRequired()])
+class ResultBoolForm(FlaskForm):
+    result = BooleanField('Результат, True или Не True?', validators=[DataRequired()])
     submit = SubmitField('Подтвердить')

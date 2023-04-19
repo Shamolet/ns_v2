@@ -10,9 +10,9 @@
         </div>
     </div>
     <br>
-    <p>Новенький? <a href="{{ url_for('auth.register') }}">Тык сюда для регистрации</a></p>
+    <p>Новенький? <a href="{{ url_for('auth_bp.register') }}">Тык сюда для регистрации</a></p>
     <p>
         Забыл пароль?
-        <a href="{{ url_for('auth.reset_password_request') }}">Тык сюда что бы сбросить</a>
+        <a href="{{ url_for('auth_bp.reset_password_request') }}">Тык сюда что бы сбросить</a>
     </p>
 {% endblock %}

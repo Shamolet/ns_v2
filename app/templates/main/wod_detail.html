@@ -27,13 +27,20 @@
 
     <br>
     <br>
+    {% if detail.type_result == 0 %}
     {{ wtf.quick_form(result_bool_form) }}
     <br>
-    {{ wtf.quick_form(result_time_form) }}
+    <p> Твой последний результат в этом комплексе : {{ results.confirm }}</p>
+    <br>
+
 <br>
+    {% elif detail.type_result == 1 %}
     {{ wtf.quick_form(result_rep_form) }}
     <br>
-    <p> Твой последний результат в этом комплексе : {{ results.result }}</p>
+    <p> Твой последний результат в этом комплексе : {{ results.result}}</p>
+    {% endif %}
+    <br>
+
     <br>
 
 </div>

@@ -33,7 +33,7 @@ migrate = Migrate()
 bootstrap = Bootstrap()
 moment = Moment()
 login = LoginManager()
-login.login_view = 'auth.login'
+login.login_view = 'auth_bp.login'
 login.login_message = 'Пожалуйста, авторизируйтесь на сайте.'
 
 
@@ -129,12 +129,12 @@ def create_app(config_class=Config):
     admin = Admin(app, name='Админка', template_mode='bootstrap3')
     #
     # # Main model views
-    from app.models.models import User, Comment, Exercise, WOD, Result_rep
+    from app.models.models import User, Comment, Exercise, WOD, ResultRep, ResultBool, ResultTime
     admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
     admin.add_view(AdminWODView(WOD, db.session, name='Тренировки'))
     admin.add_view(AdminExerciseView(Exercise, db.session, name='Упражнения'))
     admin.add_view(AdminCommentView(Comment, db.session, name='Комментарии'))
-    admin.add_view(AdminResultView(Result_rep, db.session, name='Результаты'))
+    admin.add_view(AdminResultView(ResultRep, db.session, name='Reps'))
 
     admin.add_link(MenuLink(name='Выход', endpoint='main.index'))
 

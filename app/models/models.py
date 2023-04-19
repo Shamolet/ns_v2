@@ -33,8 +33,12 @@ class User(db.Model, UserMixin):
     # Relationships
     user_comments = db.relationship('Comment',
                                     backref='author_comment', lazy='dynamic')
-    user_results = db.relationship('Result_rep',
-                                    backref='author_result', lazy='dynamic')
+    user_results_rep = db.relationship('ResultRep',
+                                       backref='author_result_rep', lazy='dynamic')
+    user_results_time = db.relationship('ResultTime',
+                                        backref='author_result_time', lazy='dynamic')
+    user_results_bool = db.relationship('ResultBool',
+                                        backref='author_result_bool', lazy='dynamic')
 
     def is_admin(self):
         return self.admin
@@ -109,11 +113,11 @@ class WOD(db.Model):
     description = db.Column(db.Text(200), nullable=False)
     type_result = db.Column(db.Integer, default=constants.BOOL)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
-    # Relationship User(Many), Comment() Exercise
+    # Relationship Comments, WODs
     wod_comments = db.relationship("Comment", backref='wod_comment', lazy=True)
-    wod_results_rep = db.relationship("Result_rep", backref='wod_result_rep', lazy=True)
-    wod_results_time = db.relationship("Result_time", backref='wod_result_time', lazy=True)
-    wod_results_bool = db.relationship("Result_bool", backref='wod_result_bool', lazy=True)
+    wod_results_rep = db.relationship("ResultRep", backref='wod_result_rep', lazy=True)
+    wod_results_time = db.relationship("ResultTime", backref='wod_result_time', lazy=True)
+    wod_results_bool = db.relationship("ResultBool", backref='wod_result_bool', lazy=True)
 
 
 # Define the Exercise data model.
@@ -133,11 +137,10 @@ class Exercise(db.Model):
 
 
 # Define the Results data model.
-class Result_rep(db.Model):
+class ResultRep(db.Model):
     __tablename__ = "results_reps"
 
     id = db.Column(db.Integer, primary_key=True)
-    # think about post results: load, time, reps
     result = db.Column(db.Integer)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User, Exercise
@@ -148,11 +151,10 @@ class Result_rep(db.Model):
         return '<Result {}>'.format(self.result)
 
 
-class Result_time(db.Model):
+class ResultTime(db.Model):
     __tablename__ = "results_times"
 
     id = db.Column(db.Integer, primary_key=True)
-    # think about post results: load, time, reps
     minutes = db.Column(db.Integer)
     seconds = db.Column(db.Integer)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
@@ -164,11 +166,10 @@ class Result_time(db.Model):
         return '<Result {}>'.format(self.minutes.seconds)
 
 
-class Result_bool(db.Model):
+class ResultBool(db.Model):
     __tablename__ = "results_booleans"
 
     id = db.Column(db.Integer, primary_key=True)
-    # think about post results: load, time, reps
     confirm = db.Column(db.Boolean())
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User, Exercise

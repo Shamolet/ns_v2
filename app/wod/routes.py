@@ -3,8 +3,8 @@ from flask_login import login_required, current_user
 
 from app import db
 from app.forms.forms import CommentForm
-from app.forms.result_forms import ResultBooleanForm, ResultTimeForm, ResultRepsForm
-from app.models.models import WOD, Result_rep, Comment
+from app.forms.result_forms import ResultBoolForm, ResultTimeForm, ResultRepsForm
+from app.models.models import WOD, ResultRep, Comment, ResultBool
 from app.wod import wod_bp
 
 
@@ -21,21 +21,56 @@ def wods():
 def wod_detail(id):
     detail = WOD.query.get(id)
 
-    result_bool_form = ResultBooleanForm()
+    # Reps
+
+    if detail.type_result == 1:
+        result_rep_form = ResultRepsForm()
+        if result_rep_form.validate_on_submit():
+            result = ResultRep(result=result_rep_form.result.data,
+                                author_result_rep=current_user, wod_result_rep=detail)
+            db.session.add(result)
+            db.session.commit()
+            flash('Результат сохранен!')
+            return redirect(url_for('wod_bp.wod_detail', id=id))
+
+        results = ResultRep.query.filter_by(wod_id=id). \
+            filter_by(author_result_rep=current_user). \
+            order_by(ResultRep.date_posted.desc()).first()
+
+        return render_template('main/wod_detail.html', detail=detail,
+                               result_rep_form=result_rep_form,
+                               results=results)
+
+    else:
+        result_bool_form = ResultBoolForm()
+        if result_bool_form.validate_on_submit():
+            result = ResultBool(confirm=result_bool_form.result.data,
+                                author_result_bool=current_user, wod_result_bool=detail)
+            db.session.add(result)
+            db.session.commit()
+            flash('Поздравляем с выполнением тренировки!')
+            return redirect(url_for('wod_bp.wod_detail',
+                                    result_bool_form=result_bool_form, id=id))
+
+        results = ResultBool.query.filter_by(wod_id=id). \
+            filter_by(author_result_bool=current_user). \
+            order_by(ResultBool.date_posted.desc()).first()
+
+        return render_template('main/wod_detail.html', detail=detail,
+                               result_bool_form=result_bool_form,
+                               results=results)
+
+    # elif detail.type_result == 2:
+    #     result_time_form = ResultTimeForm()
+    #
+    #
+    # elif detail.type_result == 3:
+    #     result_time_form = ResultTimeForm()
+    #     result_rep_form = ResultRepsForm()
+    #
+    #
 
     result_time_form = ResultTimeForm()
-
-    result_rep_form = ResultRepsForm()
-    if result_rep_form.validate_on_submit():
-        result = Result_rep(result=result_rep_form.result.data,
-                            author_result=current_user, wod_result=detail)
-        db.session.add(result)
-        db.session.commit()
-        flash('Поздравляем с выполнением комплекса!')
-        return redirect(url_for('main.wod_detail', id=id))
-    results = Result_rep.query.filter_by(wod_id=id).\
-        filter_by(author_result=current_user).\
-        order_by(Result_rep.date_posted.desc()).first()
 
     comment_form = CommentForm()
     if comment_form.validate_on_submit():
@@ -49,7 +84,5 @@ def wod_detail(id):
         order_by(Comment.timestamp.desc()).all()
     return render_template('main/wod_detail.html', comments=comments,
                            detail=detail, comment_form=comment_form,
-                           result_rep_form=result_rep_form,
                            result_time_form=result_time_form,
-                           result_bool_form=result_bool_form,
                            results=results)
