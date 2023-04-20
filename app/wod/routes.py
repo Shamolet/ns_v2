@@ -4,7 +4,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.forms.forms import CommentForm
 from app.forms.result_forms import ResultBoolForm, ResultTimeForm, ResultRepsForm
-from app.models.models import WOD, ResultRep, Comment, ResultBool
+from app.models.models import WOD, ResultRep, Comment, ResultBool, ResultTime
 from app.wod import wod_bp
 
 
@@ -41,6 +41,25 @@ def wod_detail(id):
                                result_rep_form=result_rep_form,
                                results=results)
 
+    elif detail.type_result == 2:
+        result_time_form = ResultTimeForm()
+        if result_time_form.validate_on_submit():
+            result = ResultTime(minutes=result_time_form.minutes.data,
+                                seconds=result_time_form.seconds.data,
+                                author_result_time=current_user, wod_result_time=detail)
+            db.session.add(result)
+            db.session.commit()
+            flash('Время сохранено!')
+            return redirect(url_for('wod_bp.wod_detail', id=id))
+
+        results = ResultTime.query.filter_by(wod_id=id). \
+            filter_by(author_result_time=current_user). \
+            order_by(ResultTime.date_posted.desc()).first()
+
+        return render_template('main/wod_detail.html', detail=detail,
+                               result_time_form=result_time_form,
+                               results=results)
+
     else:
         result_bool_form = ResultBoolForm()
         if result_bool_form.validate_on_submit():
@@ -60,18 +79,6 @@ def wod_detail(id):
                                result_bool_form=result_bool_form,
                                results=results)
 
-    # elif detail.type_result == 2:
-    #     result_time_form = ResultTimeForm()
-    #
-    #
-    # elif detail.type_result == 3:
-    #     result_time_form = ResultTimeForm()
-    #     result_rep_form = ResultRepsForm()
-    #
-    #
-
-    result_time_form = ResultTimeForm()
-
     comment_form = CommentForm()
     if comment_form.validate_on_submit():
         comment = Comment(body=comment_form.comment.data,
@@ -83,6 +90,4 @@ def wod_detail(id):
     comments = Comment.query.filter_by(wod_id=id).\
         order_by(Comment.timestamp.desc()).all()
     return render_template('main/wod_detail.html', comments=comments,
-                           detail=detail, comment_form=comment_form,
-                           result_time_form=result_time_form,
-                           results=results)
+                           detail=detail, comment_form=comment_form)

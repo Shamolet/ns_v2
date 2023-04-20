@@ -28,9 +28,13 @@
     <br>
     <br>
     {% if detail.type_result == 0 %}
-    {{ wtf.quick_form(result_bool_form) }}
+        {% if results.confirm == True %}
+            <p> Статус комплекса : Выполнено</p>
+        {% else %}
+            {{ wtf.quick_form(result_bool_form) }}
     <br>
-    <p> Твой последний результат в этом комплексе : {{ results.confirm }}</p>
+            <p> Статус комплекса : Надо бахнуть</p>
+        {% endif %}
     <br>
 
 <br>
@@ -38,6 +42,12 @@
     {{ wtf.quick_form(result_rep_form) }}
     <br>
     <p> Твой последний результат в этом комплексе : {{ results.result}}</p>
+    <br>
+<br>
+    {% elif detail.type_result == 2 %}
+    {{ wtf.quick_form(result_time_form) }}
+    <br>
+    <p> Твой последний результат в этом комплексе : {{ results.minutes}} : {{ results.seconds}} </p>
     {% endif %}
     <br>
 

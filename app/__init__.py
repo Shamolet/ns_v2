@@ -117,7 +117,7 @@ def create_app(config_class=Config):
 
         form_columns = ['body']
 
-    class AdminResultView(ModelView):
+    class AdminResultRepView(ModelView):
         can_edit = True
         can_create = True
         can_delete = True
@@ -125,16 +125,25 @@ def create_app(config_class=Config):
 
         form_columns = ['result']
 
+    class AdminResultTimeView(ModelView):
+        can_edit = True
+        can_create = True
+        can_delete = True
+        can_view_details = True
+
+        form_columns = ['minutes', 'seconds']
+
     # # Admin model views
     admin = Admin(app, name='Админка', template_mode='bootstrap3')
     #
     # # Main model views
-    from app.models.models import User, Comment, Exercise, WOD, ResultRep, ResultBool, ResultTime
+    from app.models.models import User, Comment, Exercise, WOD, ResultRep, ResultTime
     admin.add_view(AdminUserView(User, db.session, name='Пользователь'))
     admin.add_view(AdminWODView(WOD, db.session, name='Тренировки'))
     admin.add_view(AdminExerciseView(Exercise, db.session, name='Упражнения'))
     admin.add_view(AdminCommentView(Comment, db.session, name='Комментарии'))
-    admin.add_view(AdminResultView(ResultRep, db.session, name='Reps'))
+    admin.add_view(AdminResultRepView(ResultRep, db.session, name='Reps'))
+    admin.add_view(AdminResultTimeView(ResultTime, db.session, name='Time'))
 
     admin.add_link(MenuLink(name='Выход', endpoint='main.index'))
 
