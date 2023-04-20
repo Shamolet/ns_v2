@@ -41,6 +41,8 @@ def wod_detail(id):
                                result_rep_form=result_rep_form,
                                results=results)
 
+    # Time
+
     elif detail.type_result == 2:
         result_time_form = ResultTimeForm()
         if result_time_form.validate_on_submit():
@@ -59,6 +61,8 @@ def wod_detail(id):
         return render_template('main/wod_detail.html', detail=detail,
                                result_time_form=result_time_form,
                                results=results)
+
+    # Bool
 
     else:
         result_bool_form = ResultBoolForm()
