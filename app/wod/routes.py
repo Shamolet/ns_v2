@@ -21,6 +21,17 @@ def wods():
 def wod_detail(id):
     detail = WOD.query.get(id)
 
+    comment_form = CommentForm()
+    if comment_form.validate_on_submit():
+        comment = Comment(body=comment_form.comment.data,
+                          author_comment=current_user, wod_comment=detail)
+        db.session.add(comment)
+        db.session.commit()
+        flash('Коммент опубликован!')
+        return redirect(url_for('wod_bp.wod_detail', id=id))
+    comments = Comment.query.filter_by(wod_id=id).\
+        order_by(Comment.timestamp.desc()).all()
+
     # Reps
 
     if detail.type_result == 1:
@@ -39,7 +50,8 @@ def wod_detail(id):
 
         return render_template('main/wod_detail.html', detail=detail,
                                result_rep_form=result_rep_form,
-                               results=results)
+                               results=results, comments=comments,
+                               comment_form=comment_form)
 
     # Time
 
@@ -60,7 +72,8 @@ def wod_detail(id):
 
         return render_template('main/wod_detail.html', detail=detail,
                                result_time_form=result_time_form,
-                               results=results)
+                               results=results, comments=comments,
+                               comment_form=comment_form)
 
     # Bool
 
@@ -81,17 +94,22 @@ def wod_detail(id):
 
         return render_template('main/wod_detail.html', detail=detail,
                                result_bool_form=result_bool_form,
-                               results=results)
+                               results=results, comments=comments,
+                               comment_form=comment_form)
 
-    comment_form = CommentForm()
-    if comment_form.validate_on_submit():
-        comment = Comment(body=comment_form.comment.data,
-                          author_comment=current_user, wod_comment=detail)
-        db.session.add(comment)
-        db.session.commit()
-        flash('Коммент опубликован!')
-        return redirect(url_for('main.wod_detail', id=id))
-    comments = Comment.query.filter_by(wod_id=id).\
-        order_by(Comment.timestamp.desc()).all()
-    return render_template('main/wod_detail.html', comments=comments,
-                           detail=detail, comment_form=comment_form)
+
+@wod_bp.route('/wods/stat/<int:id>', methods=['GET', 'POST'])
+@login_required
+def wod_stat(id):
+    detail = WOD.query.get(id)
+    if detail.type_result == 1:
+        results_list = ResultRep.query.filter_by(wod_id=id).all()
+
+    elif detail.type_result == 2:
+        results_list = ResultTime.query.filter_by(wod_id=id).all()
+
+    else:
+        results_list = ResultBool.query.filter_by(wod_id=id).all()
+
+    return render_template('main/wod_stat.html', detail=detail,
+                           results_list=results_list)

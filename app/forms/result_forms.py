@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import SubmitField, IntegerField, BooleanField
-from wtforms.validators import DataRequired
+from wtforms.validators import DataRequired, NumberRange
 
 
 class ResultRepsForm(FlaskForm):
@@ -11,8 +11,9 @@ class ResultRepsForm(FlaskForm):
 
 # Разобраться с полями даты
 class ResultTimeForm(FlaskForm):
-    minutes = IntegerField('мин', validators=[DataRequired()])
-    seconds = IntegerField('сек', validators=[DataRequired()])
+    minutes = IntegerField('мин', validators=[NumberRange(min=0)])
+    seconds = IntegerField('сек', validators=[NumberRange(min=0, max=59)],
+                           description='секунды от 0 до 59')
     submit = SubmitField('Подтвердить')
 
 

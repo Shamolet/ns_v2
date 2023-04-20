@@ -5,10 +5,9 @@
 
 
 <br>
-        <a href="{{ url_for('wod_bp.wods')}} ">
-            К списку тренировок</a>
+        <a href="{{ url_for('wod_bp.wods')}} ">К списку тренировок</a>
 <br>
-<a href="#">Статистика комплекса</a>
+<a href="{{ url_for('wod_bp.wod_stat', id=detail.id)}}">Статистика комплекса</a>
 <br>
 <div class="alert alert-$red200">
     <h3>{{ detail.date_posted.date() }}</h3>
@@ -32,29 +31,29 @@
             <p> Статус комплекса : Выполнено</p>
         {% else %}
             {{ wtf.quick_form(result_bool_form) }}
-    <br>
+            <br>
             <p> Статус комплекса : Надо бахнуть</p>
         {% endif %}
-    <br>
 
-<br>
+
     {% elif detail.type_result == 1 %}
-    {{ wtf.quick_form(result_rep_form) }}
-    <br>
-    <p> Твой последний результат в этом комплексе : {{ results.result}}</p>
-    <br>
-<br>
+
+        {% if results.result == Null %}
+            {{ wtf.quick_form(result_rep_form) }}
+        {% else %}
+            <p>Твой результат в этом комплексе : {{ results.result }}</p>
+        {% endif %}
+
+
     {% elif detail.type_result == 2 %}
-    {{ wtf.quick_form(result_time_form) }}
-    <br>
-    <p> Твой последний результат в этом комплексе : {{ results.minutes}} : {{ results.seconds}} </p>
+
+        {% if results.minutes == Null and results.seconds == Null %}
+            {{ wtf.quick_form(result_time_form) }}
+        {% else %}
+        <p>Твое время в этом комплексе : {{ results.minutes }} мин {{ results.seconds }} сек </p>
+        {% endif %}
     {% endif %}
-    <br>
-
-    <br>
-
 </div>
-<br>
     {% if comment_form %}
     {{ wtf.quick_form(comment_form) }}
     <br>

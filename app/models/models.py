@@ -141,7 +141,7 @@ class ResultRep(db.Model):
     __tablename__ = "results_reps"
 
     id = db.Column(db.Integer, primary_key=True)
-    result = db.Column(db.Integer)
+    result = db.Column(db.Integer, default=None)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User, Exercise
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
@@ -155,8 +155,8 @@ class ResultTime(db.Model):
     __tablename__ = "results_times"
 
     id = db.Column(db.Integer, primary_key=True)
-    minutes = db.Column(db.Integer)
-    seconds = db.Column(db.Integer)
+    minutes = db.Column(db.Integer, default=0)
+    seconds = db.Column(db.Integer, default=0)
     date_posted = db.Column(db.DateTime, nullable=False, default=datetime.now)
     # Relationship User, Exercise
     user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
